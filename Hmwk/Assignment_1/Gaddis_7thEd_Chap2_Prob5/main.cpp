@@ -19,17 +19,17 @@ using namespace std;
 
 //Begin Execution
 int main(int argc, char** argv) {
+    
     //Declare variables
-    const short num_1 = 28, num_2 = 32, num_3 = 37,
-                num_4 = 24, num_5 = 33;
-    short sum;
-    float average;
+    short num_1 = 28, num_2 = 32, num_3 = 37,
+          num_4 = 24, num_5 = 33, sum;
+    float total_nums = 5, average;
     
     //Calculate sum and average
     sum = num_1 + num_2 + num_3 + num_4 + num_5;
-    average = sum/(5.0f); //Make sure the value of average is a float
+    average = sum/total_nums;
     
-    //Display the average to the screen
+    //Output the average to the screen
     cout<<"The average of 28, 32, 37, 24, and 33 is: "<<average<<endl;
     
     //Exit program

@@ -20,15 +20,14 @@ using namespace std;
 int main(int argc, char** argv) {
     
     //Declare variables
-    const unsigned short gallons = 12;
+    unsigned short gallons = 12;
     //Declare miles as a float to ensure MPG will also be a float
-    const float miles = 350;
-    float mpg;
+    float miles = 350, mpg;
     
     //Calculate MPG
     mpg = miles/gallons;
     
-    //Display MPG to the screen
+    //Output MPG to the screen
     cout<<"The miles per gallon of this vehicle is: "<<mpg<<endl;
     
     //Exit program

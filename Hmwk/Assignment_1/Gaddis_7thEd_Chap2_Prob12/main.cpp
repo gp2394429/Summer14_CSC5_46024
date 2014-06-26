@@ -21,7 +21,7 @@ const unsigned short ACRE = 43560; //number of square feet in an acre
 int main(int argc, char** argv) {
     
     //Declare variables
-    const float sq_feet = 389767;
+    float sq_feet = 389767;
     float tot_acres;
     
     //Calculate the total amount of acres
