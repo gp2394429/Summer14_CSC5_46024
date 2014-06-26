@@ -7,9 +7,17 @@
  *          the price of the items and the sales tax
  */
 
+//System Level Libraries 
 #include <iostream>
 using namespace std;
 
+//User Defined Libraries
+
+//Global Constants
+
+//Function Prototypes
+
+//Begin Execution
 int main(int argc, char** argv) {
     //Declare variables
     const float item_1 = 12.95, item_2 = 24.95, item_3 = 6.95,
@@ -19,10 +27,12 @@ int main(int argc, char** argv) {
     tax_total = subtotal*tax; //Calculate the tax on the subtotal
     total = subtotal+tax_total; //Calculate the total price
     
-    //Output item costs, subtotal, total tax, and total
+    //Set cout format
     cout.setf(ios::fixed);
     cout.setf(ios::showpoint);
     cout.precision(2);
+    
+    //Output item costs, subtotal, total tax, and total
     cout << "Price of item 1: $" << item_1 << endl;
     cout << "Price of item 2: $" << item_2 << endl;
     cout << "Price of item 3: $" << item_3 << endl;
