@@ -9,6 +9,7 @@
 
 //System Level Libraries 
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 //User Defined Libraries
@@ -38,10 +39,8 @@ int main(int argc, char** argv) {
         r = n/guess;
         guess = (guess+r)/2;
         //Calculate how close the new guess is to the old guess as a percentage
-        p_range = (prev_guess-guess)/prev_guess;
-        //Take the absolute value
-        if (p_range < 0)
-            p_range = -(p_range);
+        p_range = abs((prev_guess-guess)/prev_guess);
+ 
     } while (p_range > threshold);
     
     //Output the result

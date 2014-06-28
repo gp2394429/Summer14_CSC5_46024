@@ -53,8 +53,8 @@ int main(int argc, char** argv) {
         p_total = (usr_scr/max_scr)*100; //Convert from decimal to percentage
         
         //Output total
-        cout<<"Your total is "<<usr_scr<<" out of "<<max_scr<<", or "
-            <<p_total<<"%.\n";
+        cout<<"Your total is "<<usr_scr<<" out of "
+            <<max_scr<<", or "<<p_total<<"%.\n";
     }
     
     //Exit program
