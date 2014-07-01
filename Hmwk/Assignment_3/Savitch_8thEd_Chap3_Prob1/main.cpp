@@ -21,6 +21,7 @@ using namespace std;
 
 int main(int argc, char** argv) {
     //Declare variables
+    //Certain comments are used many times, so define them as variables
     string PPR_WIN = "Paper covers rock, ";
     string RCK_WIN = "Rock breaks scissors, ";
     string SCR_WIN = "Scissors cuts paper, ";
@@ -30,7 +31,7 @@ int main(int argc, char** argv) {
     string IE_P1 = "Invalid entry for player 1!\n";
     string IE_P2 = "Invalid entry for player 2!\n";
     char p1_entry, p2_entry, quit;
-    bool running = true, valid;
+    bool running = true;
     
     //Output welcome message
     cout<<"Let's play Rock, Paper, Scissors!\n\n";
@@ -109,14 +110,14 @@ int main(int argc, char** argv) {
         }
         
         //Check to see if they want to play again
-        valid = false; //Assume a non-valid answer
+        bool valid = false; //Assume a non-valid answer
         while (!valid) {
             //Get input from user
             cout<<endl;
             cout<<"Would you like to play again?[Y/N]: ";
             cin>>quit;
             
-            //Check to see if its valid input
+            //Check to see if the input is valid
             switch (quit) {
                 case 'Y':
                 case 'y':
@@ -126,7 +127,7 @@ int main(int argc, char** argv) {
                 case 'n':
                     cout<<"See you next time.\n";
                     valid = true;
-                    running = false;
+                    running = false; //The program should no longer run
                     break;
                 default:
                     cout<<"Sorry, I didn't get that.\n";                
