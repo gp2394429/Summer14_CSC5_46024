@@ -120,19 +120,21 @@ int main(int argc, char** argv) {
             }
             case(3): {
                 //Output short problem description
-                cout<<"Determine the number of days or hours or minutes for a "
-                    <<"given number of seconds.\n\n";
+                cout<<"Determine the integer number of days or hours or minutes "
+                    <<"for a given number of seconds.\n\n";
                 //Begin problem 3
                 //Declare variables
                 const int SEC_DAY = 86400;//Seconds in a day
                 const int SEC_HR = 3600; //Seconds in an hour
                 const int SEC_MIN = 60;//Seconds in a minute
                 //Inputs
-                float seconds;
+                int seconds;
                 //Get the number of seconds from the user
                 cout<<"Enter a number in seconds: ";
                 cin>>seconds;
                 cout<<endl;
+                //Format output
+                cout<<fixed;
                 //Determine the number of days or hours or minutes for the
                 //given value of seconds, and output the result to the screen
                 if (seconds >= SEC_DAY)
