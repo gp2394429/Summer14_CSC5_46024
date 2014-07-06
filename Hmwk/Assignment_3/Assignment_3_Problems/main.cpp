@@ -12,6 +12,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <limits>//used for handling bad input
 using namespace std;
 
 //User Defined Libraries
@@ -24,10 +25,16 @@ using namespace std;
 
 int main(int argc, char** argv) {
     //Main menu setup and output
+    const unsigned short DEF_PCN = 4;//Default precision for output
+    const unsigned short CUR_PCN = 2;//Currency precision for output
     unsigned short m_choice;
-    bool m_running = true; //The status of the menu loop
+    bool m_running = true;//Should the menu loop be running
     //Enter menu loop
     while(m_running) {
+        //Set default output format
+        cout.unsetf(ios::floatfield);
+        cout<<noshowpoint<<setprecision(DEF_PCN);
+        //Output the menu
         cout<<"1.  Gaddis,  7thEd, Chapter 4, Problem 4\n";
         cout<<"2.  Gaddis,  7thEd, Chapter 4, Problem 6\n";
         cout<<"3.  Gaddis,  7thEd, Chapter 4, Problem 7\n";
@@ -45,6 +52,10 @@ int main(int argc, char** argv) {
         
         switch(m_choice) {
             case(1): {
+                //Output short problem description
+                cout<<"Calculate the areas of two rectangles given their "
+                    <<"lengths and widths. Determine if both areas are equal "
+                    <<"or if one is greater than the other.\n\n";
                 //Begin problem 1
                 //Declare variables
                 //Inputs
@@ -74,9 +85,12 @@ int main(int argc, char** argv) {
                         <<area_2<<endl;
                 //End problem 1
                 cout<<endl;
-            }
                 break;
+            }
             case(2): {
+                //Output short problem description
+                cout<<"Calculate the weight(in N-kg)of an object given its "
+                    <<"mass and output if its too heavy or too light.\n\n";
                 //Begin problem 2
                 //Declare variables
                 const float E_GRAV = 9.8;//Gravity on earth in m/s
@@ -90,10 +104,10 @@ int main(int argc, char** argv) {
                 cout<<"What is the mass of the object(in kg)?: ";
                 cin>>mass;
                 cout<<endl;
-                //Calculate the weight = mass * gravity in newtons
+                //Calculate the weight = mass * gravity
                 weight = mass * E_GRAV;
                 //Output weight
-                cout<<"The weight of the object is: "<<weight<<" N\n";
+                cout<<"The weight of the object is: "<<weight<<" N-kg\n";
                 //Determine if the object is above 1000N or below 10N and
                 //output the result
                 if (weight > W_MAX)
@@ -102,9 +116,12 @@ int main(int argc, char** argv) {
                     cout<<"The object is too light!\n";
                 //End problem 2
                 cout<<endl;
-            }
                 break;
+            }
             case(3): {
+                //Output short problem description
+                cout<<"Determine the number of days or hours or minutes for a "
+                    <<"given number of seconds.\n\n";
                 //Begin problem 3
                 //Declare variables
                 const int SEC_DAY = 86400;//Seconds in a day
@@ -129,9 +146,12 @@ int main(int argc, char** argv) {
                 cout<<"in "<<seconds<<" seconds!\n";
                 //End problem 3
                 cout<<endl;
-            }
                 break;
+            }
             case(4): {
+                //Output short problem description
+                cout<<"Calculate the sum of two random numbers and compare the "
+                    <<"result to the users answer\n\n.";
                 //Begin problem 4
                 //Declare variables
                 const int MAX_RNG = 41;//Upper bound exclusive for random range
@@ -162,9 +182,11 @@ int main(int argc, char** argv) {
                     cout<<"Nice try, but the answer is actually: "<<answer<<endl;
                 //End problem 4
                 cout<<endl;
-            }
                 break;
+            }
             case(5): {
+                //Output short problem description
+                cout<<"Determine the radiation band a given wavelength is in.\n\n";
                 //Begin problem 5
                 //Declare variables
                 const float GAM_UB = 1e-11;//Upper bound on Gamma Rays
@@ -192,9 +214,11 @@ int main(int argc, char** argv) {
                 cout<<"The type of radiation is: "<<rad_type<<endl;
                 //End problem 5
                 cout<<endl;
-            }
                 break;
+            }
             case(6): {
+                //Output short problem description
+                cout<<"A very simple two player rock paper scissors game.\n\n";
                 //Start problem 6
                 //Declare variables
                 //Certain comments are used many times, so define them as variables
@@ -309,9 +333,12 @@ int main(int argc, char** argv) {
                 }
                 //End problem 6
                 cout<<endl;
-            }
                 break;
+            }
             case(7): {
+                //Output short problem description
+                cout<<"Calculate the amount due, interest due, and minimum "
+                    <<"payment due for an account with a given balance.\n\n";
                 //Begin problem 7
                 //Declare variables
                 const float INST_1000 = 1.5e-2;//Interest up to $1000
@@ -343,9 +370,7 @@ int main(int argc, char** argv) {
                     else
                         min_pay = tot_due * PAY_MUL;
                     //Format output for currency
-                    cout.setf(ios::fixed);
-                    cout.setf(ios::showpoint);
-                    cout.precision(2);
+                    cout<<fixed<<showpoint<<setprecision(CUR_PCN);
                     //Output result
                     cout<<"Balance:          "<<setw(8)<<balance<<endl;
                     cout<<"Interest due:     "<<setw(8)<<inst_due<<endl;
@@ -358,9 +383,11 @@ int main(int argc, char** argv) {
                 }
                 //End problem 7
                 cout<<endl;
-            }
                 break;
+            }
             case(8): {
+                //Output short problem description
+                cout<<"Approximate pi to a given number of terms.\n\n";
                 //Begin problem 8
                 //Declare variables
                 bool running = true; //Our program is running until the user says otherwise
@@ -394,9 +421,12 @@ int main(int argc, char** argv) {
                 }
                 //End problem 8
                 cout<<endl;
-            }
                 break;
+            }
             case(9): {
+                //Output short problem description
+                cout<<"Determine if a sphere of a given radius and weight will "
+                    <<"sink or float in water.\n\n";
                 //Begin problem 9
                 //Declare variables
                 const float GAMMA = 62.4; //The weight per unit volume of water (lb/ft^3)
@@ -424,9 +454,12 @@ int main(int argc, char** argv) {
                 cout<<endl;
                 //End Problem 9
                 cout<<endl;
-            }
                 break;
+            }
             case(10): {
+                //Output short problem description
+                cout<<"Determine when degrees in Fahrenheit will be equal to "
+                    <<"degrees in Celsius.\n\n";
                 //Begin Problem 10
                 //Declare variables
                 //Start value for celsius is 100 by the problem description
@@ -443,16 +476,19 @@ int main(int argc, char** argv) {
                     <<celsius<<" degrees.\n";
                 //End Problem 10
                 cout<<endl;
-            }
                 break;
+            }
             case(11): {
                 m_running = false;
-            }
                 break;
+            }
             default: {
-                cout<<"Unknown input\n";
+                cout<<"Unknown input, please try again.\n\n";
             }
         }
+        //In case of bad input
+        cin.clear();//Remove the error flag on bad input
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');//Skip to the next newline character
     }
     //Exit program
     cout<<"Exiting program\n";
