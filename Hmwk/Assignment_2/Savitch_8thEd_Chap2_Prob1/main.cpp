@@ -24,9 +24,9 @@ const float M_TON = 35273.92; //Metric ton in ounces
 int main(int argc, char** argv) {
     
     //Declare variables
-    double c_wht_oz; //Cereal weight in ounces
-    double c_wht_mt; //Cereal weight in metric tons
-    double num_box; //Number of boxes of the cereal to equal a metric ton.
+    float c_wht_oz; //Cereal weight in ounces
+    float c_wht_mt; //Cereal weight in metric tons
+    float num_box; //Number of boxes of the cereal to equal a metric ton.
     char cont = 'y';
     
     //Begin IO loop

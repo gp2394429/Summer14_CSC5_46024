@@ -8,26 +8,37 @@
 //System Level Libraries 
 #include <iostream>
 #include <limits>//Used for simple bad input handling
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 //User Defined Libraries
 
 //Global Constants
-const unsigned short DEC_PCT_CNV = 100;//Convert from decimal to percentage value
+const unsigned short DEC_PCT_CNV = 100;//Conversion from decimal to percentage value
+const float LTR_GLN_CNV = 0.264179;//Conversion from liters to gallons
 const float UNI_GRAV = 6.673e-8f;//Universal gravitational constant(in cm^3/(g*sec^2))
 //Function Prototypes
-bool repeatYN();
+
 //Generally useful function, not specific to any problem
 //Determine if the user wishes to repeat the calculation with a simple
 //yes or no answer
-double infRate(float prc_lst_yr, float prc_cur);
-//Used in problem 1.
+bool repeatYN();
+
+//Used in problem 1
 //Calculate the inflation rate as the current price minus the price
 //from last year divided by the price from last year
-float gForce(float mass_1, float mass_2, float dist);
-//Used in problem 2.
+double infRate(float prc_lst_yr, float prc_cur);
+
+//Used in problem 2
 //Calculate and return the gravitational force between two objects given
 //their masses(in grams) and the distance between them(in centimeters)
+float gForce(float mass_1, float mass_2, float dist);
+
+//Used in problem 3
+//Calculate miles per gallon given miles and liters of gas used
+float mpg(int miles, int liters);
+
 
 //Begin Execution
 
@@ -39,7 +50,7 @@ int main(int argc, char** argv) {
     while (m_running) {
         cout<<"1.  Savitch, 8thEd, Chapter 4, Problem 4\n";
         cout<<"2.  Savitch, 8thEd, Chapter 4, Problem 7\n";
-        //cout<<"3.  Gaddis,  7thEd, Chapter 4, Problem 7\n";
+        cout<<"3.  Savitch, 8thEd, Chapter 4, Problem 1\n";
         //cout<<"4.  Gaddis,  7thEd, Chapter 4, Problem 8\n";
         //cout<<"5.  Gaddis,  7thEd, Chapter 4, Problem 18\n";
         //cout<<"6.  Savitch, 8thEd, Chapter 3, Problem 1\n";
@@ -94,6 +105,7 @@ int main(int argc, char** argv) {
                 float mass_1, mass_2;//Masses of the two objects(in grams)
                 float dist; //Distance between the two objects(in centimeters)
                 bool running = true;//Status of whether the program should continue running
+                //Enter program loop
                 while(running) {
                     //Get input from user
                     cout<<"What is the mass of the first object(in grams)?: ";
@@ -106,6 +118,7 @@ int main(int argc, char** argv) {
                     //Output the gravitational force between the two objects(in dynes)
                     cout<<"The gravitational force between the two objects is: "
                         <<gForce(mass_1, mass_2, dist)<<" dyn.\n";
+                    //Determine if the user would like to run the program again
                     cout<<"Would you like to repeat this calculation?\n";
                     running = repeatYN();
                 }
@@ -115,7 +128,29 @@ int main(int argc, char** argv) {
             case(3):
             {
                 //Short problem description
+                cout<<"Calculate the miles per gallon of a car given the number\n"
+                    <<"of miles driven and liters of gas used.\n\n";
                 //Begin problem 3
+                //Declare variables
+                bool running = true;//Status of whether the program should continue running
+                //Inputs
+                int miles;//Miles driven
+                int liters;//Liters of gas used
+                //Enter program loop
+                while(running) {
+                    //Get miles and liters from user
+                    cout<<"How many miles did you drive?: ";
+                    cin>>miles;
+                    cout<<"How many liters of gas did the car use?: ";
+                    cin>>liters;
+                    cout<<endl;
+                    //Output the miles per gallon of the car
+                    cout<<"Your car gets about: "<<mpg(miles, liters)
+                        <<" miles per gallon\n";
+                    //Determine if the user wants to run the program again
+                    cout<<"Would you like to repeat this calculation?\n";
+                    running = repeatYN();
+                }
                 //End problem 3
                 break;
             }
@@ -211,5 +246,9 @@ double infRate(float prc_lst_yr, float prc_cur) {
 //Problem 2 functions
 float gForce(float mass_1, float mass_2, float dist) {
     return (UNI_GRAV*mass_1*mass_2)/(dist*dist);
+}
+//Problem 3 functions
+float mpg(int miles, int liters) {
+    return miles/(liters*LTR_GLN_CNV);
 }
 

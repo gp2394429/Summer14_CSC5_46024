@@ -22,7 +22,7 @@ using namespace std;
 //Begin Execution
 int main(int argc, char** argv) {
     //Declare variables
-    double rads;
+    float rads;
 
     //Get the angle in radians from the user
     cout<<"Please enter an angle in radians: ";

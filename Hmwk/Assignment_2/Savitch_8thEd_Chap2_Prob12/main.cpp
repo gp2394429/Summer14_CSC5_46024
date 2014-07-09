@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     //Declare variables
     int n; //The integer we are trying to find the square root of
     float threshold = 1e-2f; //Our threshold condition for stopping the loop
-    double r, prev_guess, guess, p_range;
+    float r, prev_guess, guess, p_range;
     
     //Get the integer we are trying to find the square root of
     cout<<"Please enter an integer: ";
