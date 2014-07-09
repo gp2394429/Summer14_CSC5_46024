@@ -39,6 +39,21 @@ float gForce(float mass_1, float mass_2, float dist);
 //Calculate miles per gallon given miles and liters of gas used
 float mpg(int miles, int liters);
 
+//Used in problem 4
+//Determine the decimal value of a number given the whole value and
+//fractional part
+double fracToDec(int whole, int numer, int denom);
+
+//Used in problem 5
+//Calculate an interest payment as the initial loan balance times the
+//interest rate
+float istPymt(int init_bal, float ist_rate);
+//Calculate the annual mortgage cost as the 3% of the initial loan balance
+//credited toward paying off the principle, plus the interest payment
+float anMorCst(int init_bal, float ist_pymt);
+//Calculate the tax savings as the interest payment times the marginal
+//tax rate
+float taxSave(float ist_pymt, float tax_rate);
 
 //Begin Execution
 
@@ -51,14 +66,14 @@ int main(int argc, char** argv) {
         cout<<"1.  Savitch, 8thEd, Chapter 4, Problem 4\n";
         cout<<"2.  Savitch, 8thEd, Chapter 4, Problem 7\n";
         cout<<"3.  Savitch, 8thEd, Chapter 4, Problem 1\n";
-        //cout<<"4.  Gaddis,  7thEd, Chapter 4, Problem 8\n";
-        //cout<<"5.  Gaddis,  7thEd, Chapter 4, Problem 18\n";
+        cout<<"4.  Savitch, 8thEd, Chapter 4, Problem 3\n";
+        cout<<"5.  Savitch, 8thEd, Chapter 4, Problem 8\n";
         //cout<<"6.  Savitch, 8thEd, Chapter 3, Problem 1\n";
         //cout<<"7.  Savitch, 8thEd, Chapter 3, Problem 2\n";
         //cout<<"8.  Savitch, 8thEd, Chapter 3, Problem 12\n";
         //cout<<"9.  Savitch, 8thEd, Chapter 3, Problem 15\n";
         //cout<<"10. Savitch, 8thEd, Chapter 3, Problem 16\n";
-        //cout<<"11. Quit the program\n";
+        cout<<"11. Quit the program\n";
         cout << "Enter an integer from 1 to 11 to select an option above: ";
         cin>>m_choice;
         cout<<endl;
@@ -121,6 +136,7 @@ int main(int argc, char** argv) {
                     //Determine if the user would like to run the program again
                     cout<<"Would you like to repeat this calculation?\n";
                     running = repeatYN();
+                    cout<<endl;
                 }
                 //End problem 2
                 break;
@@ -150,6 +166,7 @@ int main(int argc, char** argv) {
                     //Determine if the user wants to run the program again
                     cout<<"Would you like to repeat this calculation?\n";
                     running = repeatYN();
+                    cout<<endl;
                 }
                 //End problem 3
                 break;
@@ -157,14 +174,79 @@ int main(int argc, char** argv) {
             case(4):
             {
                 //Short problem description
+                cout<<"Determine the price of a stock given the whole dollar\n"
+                    <<"and fractional portion.\n\n";
                 //Begin problem 4
+                //Declare variables
+                bool running = true;//Status of whether the program should continue running
+                //Inputs
+                int shr_own;//Number of the shares owned
+                int wl_dol;//Whole dollar value of the stock
+                int numer;//Numerator of the fractional part
+                int denom;//Denominator of the fractional part
+                //Outputs
+                double tot_val;//Total value of the user's holdings
+                //Enter program loop
+                while(running) {
+                    //Get number of shares owned and the whole dollar and fractional part 
+                    cout<<"Enter how many shares you own: ";
+                    cin>>shr_own;
+                    cout<<"Enter the whole dollar value of the stock: ";
+                    cin>>wl_dol;
+                    cout<<"Enter the numerator of the fractional part: ";
+                    cin>>numer;
+                    cout<<"Enter the denominator of the fractional part: ";
+                    cin>>denom;
+                    cout<<endl;
+                    //Calculate the total value of the users holdings
+                    tot_val = fracToDec(wl_dol, numer, denom)*shr_own;
+                    //Output the dollar value in decimal form
+                    cout<<"The total value of your holdings is: $"<<tot_val<<endl;
+                    //Determine if the user wants to repeat the program
+                    cout<<"Would you like to repeat this calculation?\n";
+                    running = repeatYN();
+                    cout<<endl; 
+                }
                 //End problem 4
                 break;
             }
             case(5):
             {
                 //Short problem description
+                cout<<"Determine the annual after-tax cost of a new house for\n"
+                    <<"the first year of ownership.\n\n";
                 //Begin problem 5
+                //Declare variables
+                const float TAX_RATE = 3.5e-1f;//Marginal tax rate
+                const float IST_RATE = 6e-2f;//Interest rate
+                bool running = true;//Status of whether the program should continue running
+                int init_bal;//Initial loan balance
+                float ist_pymt;//Interest payment
+                //Inputs
+                int hse_prc;//Cost of the house
+                int dwn_pymt;//Down payment on the house
+                //Output
+                float an_cst;//Total annual cost
+                while(running){
+                    //Get the house price and down payment from user
+                    cout<<"How much did the house cost?: ";
+                    cin>>hse_prc;
+                    cout<<"How much was the down payment?: ";
+                    cin>>dwn_pymt;
+                    cout<<endl;
+                    //Calculations
+                    init_bal = hse_prc-dwn_pymt;//Calculate initial balance
+                    ist_pymt = istPymt(init_bal, IST_RATE);//Calculate the interest payments
+                    //Total after tax payment is total payment minus tax deductions
+                    an_cst = anMorCst(init_bal, ist_pymt)-taxSave(ist_pymt, TAX_RATE);
+                    //Output the result
+                    cout<<"The total after-tax cost of your new house for the "
+                        <<"first year is: $"<<an_cst<<endl;
+                    //Determine if the user wants to run the program again
+                    cout<<"Would you like to repeat this calculation?\n";
+                    running = repeatYN();
+                    cout<<endl;
+                }
                 //End problem 5
                 break;
             }
@@ -209,7 +291,6 @@ int main(int argc, char** argv) {
             default:
                 cout<<"Unknown input, please try again.\n\n";
         }
-        cout<<endl;
         //In case of bad input
         cin.clear();//Remove the error flag on bad input
         cin.ignore(numeric_limits<streamsize>::max(), '\n');//Skip to the next newline character
@@ -250,5 +331,23 @@ float gForce(float mass_1, float mass_2, float dist) {
 //Problem 3 functions
 float mpg(int miles, int liters) {
     return miles/(liters*LTR_GLN_CNV);
+}
+//Problem 4 functions
+double fracToDec(int whole, int numer, int denom) {
+    return (whole+(static_cast<double>(numer)/denom));
+}
+//Problem 5 functions
+float istPymt(int prnpl, float ist_rate){
+    return prnpl*ist_rate;
+}
+
+float anMorCst(int ln_bal, float ist_pymt){
+    //Assume 3% credit towards the principal
+    const float PNL_CRE = 3e-2f;
+    return ist_pymt+(ln_bal*PNL_CRE);
+}
+
+float taxSave(float ist_pymt, float tax_rate){
+    return ist_pymt*tax_rate;
 }
 
