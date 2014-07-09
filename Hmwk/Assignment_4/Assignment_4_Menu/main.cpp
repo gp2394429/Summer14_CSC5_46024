@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
         cout<<"3.  Savitch, 8thEd, Chapter 4, Problem 1\n";
         cout<<"4.  Savitch, 8thEd, Chapter 4, Problem 3\n";
         cout<<"5.  Savitch, 8thEd, Chapter 4, Problem 8\n";
-        //cout<<"6.  Savitch, 8thEd, Chapter 3, Problem 1\n";
+        cout<<"6.  Gaddis,  7thEd, Chapter 5, Problem 1\n";
         //cout<<"7.  Savitch, 8thEd, Chapter 3, Problem 2\n";
         //cout<<"8.  Savitch, 8thEd, Chapter 3, Problem 12\n";
         //cout<<"9.  Savitch, 8thEd, Chapter 3, Problem 15\n";
@@ -253,7 +253,22 @@ int main(int argc, char** argv) {
             case(6):
             {
                 //Short problem description
+                cout<<"Display the characters for each ASCII code from 32 and 127.\n\n";
                 //Begin problem 6
+                //Declare variables
+                const int START = 32;//Start at ASCII code 36
+                const int FINISH = 127;//End the loop when count is greater than this
+                const int LINEBREAK = 16;//New line every 16 characters
+                //Enter program loop
+                for(int count = START;count<=FINISH;count++){
+                    //Ensure a new line every 16 characters
+                    if (((count-START)%LINEBREAK == 0))
+                        cout<<endl;
+                    //Print out an ASCII character followed by a space
+                    cout<<static_cast<char>(count)<<" ";
+                }
+                //Pretty printing
+                cout<<endl<<endl;
                 //End problem 6
                 break;
             }
