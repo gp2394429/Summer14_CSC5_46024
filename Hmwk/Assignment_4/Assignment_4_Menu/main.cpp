@@ -77,18 +77,21 @@ int main(int argc, char** argv) {
         cout << "Enter an integer from 1 to 11 to select an option above: ";
         cin>>m_choice;
         cout<<endl;
+        
         //Begin menu
         switch(m_choice){
             case(1):{
                 //Short problem description
                 cout<<"Calculate the miles per gallon of a car given the number\n"
                     <<"of miles driven and liters of gas used.\n\n";
+                
                 //Begin problem 1
                 //Declare variables
                 bool running = true;//Status of whether the program should continue running
                 //Inputs
                 int miles;//Miles driven
                 int liters;//Liters of gas used
+                
                 //Enter program loop
                 while(running) {
                     //Get miles and liters from user
@@ -97,9 +100,11 @@ int main(int argc, char** argv) {
                     cout<<"How many liters of gas did the car use?: ";
                     cin>>liters;
                     cout<<endl;
+                    
                     //Output the miles per gallon of the car
                     cout<<"Your car gets about: "<<mpg(miles, liters)
                         <<" miles per gallon\n";
+                    
                     //Determine if the user wants to run the program again
                     cout<<"Would you like to repeat this calculation?\n";
                     running = repeatYN();
@@ -112,6 +117,7 @@ int main(int argc, char** argv) {
                 //Short problem description
                 cout<<"Determine the price of a stock given the whole dollar\n"
                     <<"and fractional portion.\n\n";
+                
                 //Begin problem 2
                 //Declare variables
                 bool running = true;//Status of whether the program should continue running
@@ -122,6 +128,7 @@ int main(int argc, char** argv) {
                 int denom;//Denominator of the fractional part
                 //Outputs
                 double tot_val;//Total value of the user's holdings
+                
                 //Enter program loop
                 while(running) {
                     //Get number of shares owned and the whole dollar and fractional part 
@@ -134,10 +141,13 @@ int main(int argc, char** argv) {
                     cout<<"Enter the denominator of the fractional part: ";
                     cin>>denom;
                     cout<<endl;
+                    
                     //Calculate the total value of the users holdings
                     tot_val = fracToDec(wl_dol, numer, denom)*shr_own;
+                    
                     //Output the dollar value in decimal form
                     cout<<"The total value of your holdings is: $"<<tot_val<<endl;
+                    
                     //Determine if the user wants to repeat the program
                     cout<<"Would you like to repeat this calculation?\n";
                     running = repeatYN();
@@ -151,12 +161,14 @@ int main(int argc, char** argv) {
                 cout<<"Gauge the percentage inflation given the price of an\n"
                     <<"item currently and the price of an item from a year \n"
                     <<"ago.\n\n";
+                
                 //Begin problem 3
                 //Declare variables
                 bool running = true;//Status of whether the program should continue running
                 //Inputs
                 float prc_lst_yr;//Price last year
                 float prc_cur;//Price currently
+                
                 //Enter program loop
                 while(running) {
                     //Get the current and last years price for the item
@@ -165,9 +177,11 @@ int main(int argc, char** argv) {
                     cout<<"How much does the item cost now?: ";
                     cin>>prc_cur;
                     cout<<endl;
+                    
                     //Output the inflation rate
                     cout<<"The inflation rate is about: "
                         <<infRate(prc_lst_yr, prc_cur)<<"%\n";
+                    
                     //Determine if the user wants to run the program again
                     cout<<"Would you like to calculate the inflation rate "
                         <<"of another item?\n";
@@ -180,12 +194,14 @@ int main(int argc, char** argv) {
             case(4):{
                 //Short problem description
                 cout<<"Calculate the gravitational force between two objects.\n\n";
+                
                 //Begin problem 4
                 //Declare variables
                 //Inputs
                 float mass_1, mass_2;//Masses of the two objects(in grams)
                 float dist; //Distance between the two objects(in centimeters)
                 bool running = true;//Status of whether the program should continue running
+                
                 //Enter program loop
                 while(running) {
                     //Get input from user
@@ -196,9 +212,11 @@ int main(int argc, char** argv) {
                     cout<<"What is the distance between the two objects(in centimeters)?: ";
                     cin>>dist;
                     cout<<endl;
+                    
                     //Output the gravitational force between the two objects(in dynes)
                     cout<<"The gravitational force between the two objects is: "
                         <<gForce(mass_1, mass_2, dist)<<" dyn.\n";
+                    
                     //Determine if the user would like to run the program again
                     cout<<"Would you like to repeat this calculation?\n";
                     running = repeatYN();
@@ -211,6 +229,7 @@ int main(int argc, char** argv) {
                 //Short problem description
                 cout<<"Determine the annual after-tax cost of a new house for\n"
                     <<"the first year of ownership.\n\n";
+                
                 //Begin problem 5
                 //Declare variables
                 const float TAX_RATE = 3.5e-1f;//Marginal tax rate
@@ -223,6 +242,7 @@ int main(int argc, char** argv) {
                 int dwn_pymt;//Down payment on the house
                 //Output
                 float an_cst;//Total annual cost
+                
                 while(running){
                     //Get the house price and down payment from user
                     cout<<"How much did the house cost?: ";
@@ -230,14 +250,17 @@ int main(int argc, char** argv) {
                     cout<<"How much was the down payment?: ";
                     cin>>dwn_pymt;
                     cout<<endl;
+                    
                     //Calculations
                     init_bal = hse_prc-dwn_pymt;//Calculate initial balance
                     ist_pymt = istPymt(init_bal, IST_RATE);//Calculate the interest payments
                     //Total after tax payment is total payment minus tax deductions
                     an_cst = anMorCst(init_bal, ist_pymt)-taxSave(ist_pymt, TAX_RATE);
+                    
                     //Output the result
                     cout<<"The total after-tax cost of your new house for the "
                         <<"first year is: $"<<an_cst<<endl;
+                    
                     //Determine if the user wants to run the program again
                     cout<<"Would you like to repeat this calculation?\n";
                     running = repeatYN();
@@ -249,17 +272,20 @@ int main(int argc, char** argv) {
             case(6):{
                 //Short problem description
                 cout<<"Display the characters for each ASCII code from 32 and 127.\n";
+                
                 //Begin problem 6
                 //Declare variables
                 const int START = 32;//Start at ASCII code 36
                 const int FINISH = 127;//End the loop when count is greater than this
                 const int LINEBREAK = 16;//New line every 16 characters
+                
                 //Enter program loop
                 for(int count = START;count<=FINISH;count++){
                     //Ensure a new line every 16 characters
                     if (((count-START)%LINEBREAK == 0))
                         cout<<endl;
-                    //Print out an ASCII character followed by a space
+                    
+                    //Output an ASCII character followed by a space
                     cout<<static_cast<char>(count)<<" ";
                 }
                 //Two newlines to make the output pretty
@@ -337,18 +363,22 @@ bool repeatYN() {
 double infRate(float prc_lst_yr, float prc_cur) {
     return ((prc_cur-prc_lst_yr)/prc_lst_yr)*DEC_PCT_CNV;
 }
+
 //Problem 2 functions
 float gForce(float mass_1, float mass_2, float dist) {
     return (UNI_GRAV*mass_1*mass_2)/(dist*dist);
 }
+
 //Problem 3 functions
 float mpg(int miles, int liters) {
     return miles/(liters*LTR_GLN_CNV);
 }
+
 //Problem 4 functions
 double fracToDec(int whole, int numer, int denom) {
     return (whole+(static_cast<double>(numer)/denom));
 }
+
 //Problem 5 functions
 float istPymt(int prnpl, float ist_rate){
     return prnpl*ist_rate;
