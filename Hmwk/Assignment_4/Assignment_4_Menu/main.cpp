@@ -28,7 +28,7 @@ bool repeatYN();
 //Used in problem 1
 //Calculate the inflation rate as the current price minus the price
 //from last year divided by the price from last year
-double infRate(float prc_lst_yr, float prc_cur);
+double infRate(float prc_lst_yr, float prc_cur);//Problem asks for double specifically
 
 //Used in problem 2
 //Calculate and return the gravitational force between two objects given
@@ -42,7 +42,7 @@ float mpg(int miles, int liters);
 //Used in problem 4
 //Determine the decimal value of a number given the whole value and
 //fractional part
-double fracToDec(int whole, int numer, int denom);
+double fracToDec(int whole, int numer, int denom);//Problem asks for double specifically
 
 //Used in problem 5
 //Calculate an interest payment as the initial loan balance times the
@@ -63,10 +63,10 @@ int main(int argc, char** argv) {
     bool m_running = true; //The status of the menu loop
     //Enter menu loop
     while (m_running) {
-        cout<<"1.  Savitch, 8thEd, Chapter 4, Problem 4\n";
-        cout<<"2.  Savitch, 8thEd, Chapter 4, Problem 7\n";
-        cout<<"3.  Savitch, 8thEd, Chapter 4, Problem 1\n";
-        cout<<"4.  Savitch, 8thEd, Chapter 4, Problem 3\n";
+        cout<<"1.  Savitch, 8thEd, Chapter 4, Problem 1\n";
+        cout<<"2.  Savitch, 8thEd, Chapter 4, Problem 3\n";
+        cout<<"3.  Savitch, 8thEd, Chapter 4, Problem 4\n";
+        cout<<"4.  Savitch, 8thEd, Chapter 4, Problem 7\n";
         cout<<"5.  Savitch, 8thEd, Chapter 4, Problem 8\n";
         cout<<"6.  Gaddis,  7thEd, Chapter 5, Problem 1\n";
         //cout<<"7.  Savitch, 8thEd, Chapter 3, Problem 2\n";
@@ -77,76 +77,13 @@ int main(int argc, char** argv) {
         cout << "Enter an integer from 1 to 11 to select an option above: ";
         cin>>m_choice;
         cout<<endl;
-
-        switch (m_choice) {
-            case(1): {
-                //Short problem description
-                cout<<"Gauge the percentage inflation given the price of an\n"
-                    <<"item currently and the price of an item from a year \n"
-                    <<"ago.\n\n";
-                //Begin problem 1
-                //Declare variables
-                bool running = true;//Status of whether the program should continue running
-                //Inputs
-                float prc_lst_yr;//Price last year
-                float prc_cur;//Price currently
-                //Enter program loop
-                while(running) {
-                    //Get the current and last years price for the item
-                    cout<<"How much did the item cost last year?: ";
-                    cin>>prc_lst_yr;
-                    cout<<"How much does the item cost now?: ";
-                    cin>>prc_cur;
-                    cout<<endl;
-                    //Output the inflation rate
-                    cout<<"The inflation rate is about: "
-                        <<infRate(prc_lst_yr, prc_cur)<<"%\n";
-                    //Determine if the user wants to run the program again
-                    cout<<"Would you like to calculate the inflation rate "
-                        <<"of another item?\n";
-                    running = repeatYN();//Answer a simple Y/N to find out if the user wants to continue
-                    cout<<endl;
-                    }
-                //End problem 1
-                break;
-            }
-            case(2):
-            {
-                //Short problem description
-                cout<<"Calculate the gravitational force between two objects.\n\n";
-                //Begin problem 2
-                //Declare variables
-                //Inputs
-                float mass_1, mass_2;//Masses of the two objects(in grams)
-                float dist; //Distance between the two objects(in centimeters)
-                bool running = true;//Status of whether the program should continue running
-                //Enter program loop
-                while(running) {
-                    //Get input from user
-                    cout<<"What is the mass of the first object(in grams)?: ";
-                    cin>>mass_1;
-                    cout<<"What is the mass of the second object(in grams)?: ";
-                    cin>>mass_2;
-                    cout<<"What is the distance between the two objects(in centimeters)?: ";
-                    cin>>dist;
-                    cout<<endl;
-                    //Output the gravitational force between the two objects(in dynes)
-                    cout<<"The gravitational force between the two objects is: "
-                        <<gForce(mass_1, mass_2, dist)<<" dyn.\n";
-                    //Determine if the user would like to run the program again
-                    cout<<"Would you like to repeat this calculation?\n";
-                    running = repeatYN();
-                    cout<<endl;
-                }
-                //End problem 2
-                break;
-            }
-            case(3):
-            {
+        //Begin menu
+        switch(m_choice){
+            case(1):{
                 //Short problem description
                 cout<<"Calculate the miles per gallon of a car given the number\n"
                     <<"of miles driven and liters of gas used.\n\n";
-                //Begin problem 3
+                //Begin problem 1
                 //Declare variables
                 bool running = true;//Status of whether the program should continue running
                 //Inputs
@@ -168,15 +105,14 @@ int main(int argc, char** argv) {
                     running = repeatYN();
                     cout<<endl;
                 }
-                //End problem 3
+                //End problem 1
                 break;
             }
-            case(4):
-            {
+            case(2):{
                 //Short problem description
                 cout<<"Determine the price of a stock given the whole dollar\n"
                     <<"and fractional portion.\n\n";
-                //Begin problem 4
+                //Begin problem 2
                 //Declare variables
                 bool running = true;//Status of whether the program should continue running
                 //Inputs
@@ -205,13 +141,73 @@ int main(int argc, char** argv) {
                     //Determine if the user wants to repeat the program
                     cout<<"Would you like to repeat this calculation?\n";
                     running = repeatYN();
-                    cout<<endl; 
+                    cout<<endl;
+                }
+                //End problem 2
+                break;
+            }
+            case(3):{
+                //Short problem description
+                cout<<"Gauge the percentage inflation given the price of an\n"
+                    <<"item currently and the price of an item from a year \n"
+                    <<"ago.\n\n";
+                //Begin problem 3
+                //Declare variables
+                bool running = true;//Status of whether the program should continue running
+                //Inputs
+                float prc_lst_yr;//Price last year
+                float prc_cur;//Price currently
+                //Enter program loop
+                while(running) {
+                    //Get the current and last years price for the item
+                    cout<<"How much did the item cost last year?: ";
+                    cin>>prc_lst_yr;
+                    cout<<"How much does the item cost now?: ";
+                    cin>>prc_cur;
+                    cout<<endl;
+                    //Output the inflation rate
+                    cout<<"The inflation rate is about: "
+                        <<infRate(prc_lst_yr, prc_cur)<<"%\n";
+                    //Determine if the user wants to run the program again
+                    cout<<"Would you like to calculate the inflation rate "
+                        <<"of another item?\n";
+                    running = repeatYN();//Answer a simple Y/N to find out if the user wants to continue
+                    cout<<endl;
+                }
+                //End problem 3
+                break;
+            }
+            case(4):{
+                //Short problem description
+                cout<<"Calculate the gravitational force between two objects.\n\n";
+                //Begin problem 4
+                //Declare variables
+                //Inputs
+                float mass_1, mass_2;//Masses of the two objects(in grams)
+                float dist; //Distance between the two objects(in centimeters)
+                bool running = true;//Status of whether the program should continue running
+                //Enter program loop
+                while(running) {
+                    //Get input from user
+                    cout<<"What is the mass of the first object(in grams)?: ";
+                    cin>>mass_1;
+                    cout<<"What is the mass of the second object(in grams)?: ";
+                    cin>>mass_2;
+                    cout<<"What is the distance between the two objects(in centimeters)?: ";
+                    cin>>dist;
+                    cout<<endl;
+                    //Output the gravitational force between the two objects(in dynes)
+                    cout<<"The gravitational force between the two objects is: "
+                        <<gForce(mass_1, mass_2, dist)<<" dyn.\n";
+                    //Determine if the user would like to run the program again
+                    cout<<"Would you like to repeat this calculation?\n";
+                    running = repeatYN();
+                    cout<<endl;
                 }
                 //End problem 4
                 break;
             }
-            case(5):
-            {
+            case(5):{
                 //Short problem description
                 cout<<"Determine the annual after-tax cost of a new house for\n"
                     <<"the first year of ownership.\n\n";
@@ -250,10 +246,9 @@ int main(int argc, char** argv) {
                 //End problem 5
                 break;
             }
-            case(6):
-            {
+            case(6):{
                 //Short problem description
-                cout<<"Display the characters for each ASCII code from 32 and 127.\n\n";
+                cout<<"Display the characters for each ASCII code from 32 and 127.\n";
                 //Begin problem 6
                 //Declare variables
                 const int START = 32;//Start at ASCII code 36
@@ -267,7 +262,7 @@ int main(int argc, char** argv) {
                     //Print out an ASCII character followed by a space
                     cout<<static_cast<char>(count)<<" ";
                 }
-                //Pretty printing
+                //Two newlines to make the output pretty
                 cout<<endl<<endl;
                 //End problem 6
                 break;
@@ -332,6 +327,9 @@ bool repeatYN() {
                 break;
             default:
                 cout<<"Invalid input.\n";
+                //In case of bad input
+                cin.clear();//Remove the error flag on bad input
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');//Skip to the next newline character
         }
     }
 }
