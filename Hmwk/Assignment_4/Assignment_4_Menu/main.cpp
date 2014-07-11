@@ -10,6 +10,8 @@
 #include <limits>//Used for simple bad input handling
 #include <cstdlib>
 #include <ctime>
+#include <cstring>
+#include <fstream>
 using namespace std;
 
 //User Defined Libraries
@@ -70,7 +72,7 @@ int main(int argc, char** argv) {
         cout<<"5.  Savitch, 8thEd, Chapter 4, Problem 8\n";
         cout<<"6.  Gaddis,  7thEd, Chapter 5, Problem 1\n";
         cout<<"7.  Gaddis,  7thEd, Chapter 5, Problem 2\n";
-        //cout<<"8.  Savitch, 8thEd, Chapter 3, Problem 12\n";
+        cout<<"8.  Gaddis,  7thEd, Chapter 3, Problem 26\n";
         //cout<<"9.  Savitch, 8thEd, Chapter 3, Problem 15\n";
         //cout<<"10. Savitch, 8thEd, Chapter 3, Problem 16\n";
         cout<<"11. Quit the program\n";
@@ -324,8 +326,46 @@ int main(int argc, char** argv) {
             case(8):
             {
                 //Short problem description
+                cout<<"Read students first names from a file and determine which should\n"
+                    <<"be first in line and which should be last alphabetically.\n\n";
                 //Begin problem 8
+                //Declare variables
+                const unsigned short N_SIZE = 25;//Maximum size for a name including delimiter
+                char c_name[N_SIZE];//The current name being read by the file
+                //Inputs
+                ifstream in_file;//In input file
+                //Outputs
+                char f_line[N_SIZE];//The current candidate for who is first in line
+                char l_line[N_SIZE];//The current candidate for who is last in line
+                
+                //Open the input file and test for errors
+                in_file.open("LineUp.dat");
+                if(!in_file)
+                    cout<<"Error opening file."<<endl;
+                else {
+                    //Read the first name and set it to both the first and last in line
+                    in_file>>c_name;
+                    strcpy(f_line,c_name);
+                    strcpy(l_line,c_name);
+                    
+                    //Loop through the file reading in names
+                    while(in_file>>c_name) {
+                        //Check to see if the current name should be the first or last in line
+                        if(strcmp(c_name,f_line)<0)
+                            strcpy(f_line,c_name);//Set the first in line to be the current name
+                        if(strcmp(c_name,l_line)>0)
+                            strcpy(l_line,c_name);//Set the last in line to be the current name
+                    }
+
+                    //Output the names of the people first and last in line
+                    cout<<"First in line: "<<f_line<<endl;
+                    cout<<"Last in line: "<<l_line<<endl;
+                    
+                    //Close the input file
+                    in_file.close();
+                }
                 //End problem 8
+                cout<<endl;
                 break;
             }
             case(9):
