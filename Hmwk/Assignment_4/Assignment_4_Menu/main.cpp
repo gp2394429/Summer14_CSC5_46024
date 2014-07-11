@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
         cout<<"4.  Savitch, 8thEd, Chapter 4, Problem 7\n";
         cout<<"5.  Savitch, 8thEd, Chapter 4, Problem 8\n";
         cout<<"6.  Gaddis,  7thEd, Chapter 5, Problem 1\n";
-        //cout<<"7.  Savitch, 8thEd, Chapter 3, Problem 2\n";
+        cout<<"7.  Gaddis,  7thEd, Chapter 5, Problem 2\n";
         //cout<<"8.  Savitch, 8thEd, Chapter 3, Problem 12\n";
         //cout<<"9.  Savitch, 8thEd, Chapter 3, Problem 15\n";
         //cout<<"10. Savitch, 8thEd, Chapter 3, Problem 16\n";
@@ -278,9 +278,9 @@ int main(int argc, char** argv) {
                 const int START = 32;//Start at ASCII code 36
                 const int FINISH = 127;//End the loop when count is greater than this
                 const int LINEBREAK = 16;//New line every 16 characters
-                
+                int count = START;//Count for the for loop
                 //Enter program loop
-                for(int count = START;count<=FINISH;count++){
+                for(count;count<=FINISH;count++){
                     //Ensure a new line every 16 characters
                     if (((count-START)%LINEBREAK == 0))
                         cout<<endl;
@@ -288,16 +288,37 @@ int main(int argc, char** argv) {
                     //Output an ASCII character followed by a space
                     cout<<static_cast<char>(count)<<" ";
                 }
+                //End problem 6
                 //Two newlines to make the output pretty
                 cout<<endl<<endl;
-                //End problem 6
                 break;
             }
             case(7):
             {
                 //Short problem description
+                cout<<"Sum all the integers from 1 to a given integer.\n\n";
                 //Begin problem 7
+                //Declare variables
+                //Inputs
+                int num;//Integer to sum to
+                //Outputs
+                unsigned int sum = 0;//The sum to output
+                
+                //Get the number to sum to from the user and verify it is not less than one
+                do{
+                    cout<<"Please enter an integer of 1 or greater: ";
+                    cin>>num;
+                }while(num<1);
+                
+                //Sum to the given integer
+                for(num;num>=1;num--)
+                    sum+=num;
+                
+                //Output the result
+                cout<<"The sum is: "<<sum<<endl;
+                
                 //End problem 7
+                cout<<endl;
                 break;
             }
             case(8):
