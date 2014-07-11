@@ -72,9 +72,9 @@ int main(int argc, char** argv) {
         cout<<"5.  Savitch, 8thEd, Chapter 4, Problem 8\n";
         cout<<"6.  Gaddis,  7thEd, Chapter 5, Problem 1\n";
         cout<<"7.  Gaddis,  7thEd, Chapter 5, Problem 2\n";
-        cout<<"8.  Gaddis,  7thEd, Chapter 3, Problem 26\n";
-        //cout<<"9.  Savitch, 8thEd, Chapter 3, Problem 15\n";
-        //cout<<"10. Savitch, 8thEd, Chapter 3, Problem 16\n";
+        cout<<"8.  Gaddis,  7thEd, Chapter 5, Problem 15\n";
+        cout<<"9.  Gaddis,  7thEd, Chapter 5, Problem 18\n";
+        cout<<"10. Gaddis,  7thEd, Chapter 5, Problem 26\n";
         cout<<"11. Quit the program\n";
         cout << "Enter an integer from 1 to 11 to select an option above: ";
         cin>>m_choice;
@@ -326,9 +326,85 @@ int main(int argc, char** argv) {
             case(8):
             {
                 //Short problem description
+                cout<<"Calculate the size of a population each day for a given number\n"
+                    <<"of days, the original population size, and percent increase in\n"
+                    <<"daily population, and number.\n\n";
+                //Begin problem 8
+                //Declare variables
+                //Inputs
+                int n_days;//Number of days
+                float pop_size;//Population size
+                float pct_inc;//Percent increase per day
+                
+                //Get number of days, population size, and percent increase per day 
+                //Validate that the population size is >= 2
+                do{
+                    cout<<"What is the starting population?: ";
+                    cin>>pop_size;
+                }while(pop_size<2);
+                //Validate that the percent increase is non-negative
+                do{
+                    cout<<"What is the percent increase per day?: ";
+                    cin>>pct_inc;
+                }while(pct_inc<0);
+                //Validate that the number of days is not < 1
+                do{
+                    cout<<"How many days would you like to track the growth?: ";
+                    cin>>n_days;
+                }while(n_days<1);
+                cout<<endl;
+                
+                //Calculate and print the population on each day tracked
+                for(int count = 1;count<=n_days;count++){
+                    cout<<"Day "<<count<<": "<<static_cast<int>(pop_size)<<endl;
+                    pop_size+=pop_size*(pct_inc/DEC_PCT_CNV);
+                }
+                //End problem 8
+                cout<<endl;
+                break;
+            }
+            case(9):
+            {
+                //Short problem description
+                cout<<"Display a rectangle of dimensions MxN where M and N are inputs\n"
+                    <<"and are >= 2 and <= 10, using the larger number as the length.\n\n";
+                //Begin problem 9
+                //Declare variables
+                //Inputs
+                unsigned short len;//Length of the rectangle
+                unsigned short wid;//Width of the rectangle
+                
+                //Get length and width from user and check for errors
+                do{
+                cout<<"Enter the length and width of the rectangle (between 2 and 10): ";
+                cin>>len>>wid;
+                cout<<endl;
+                }while(len<2||len>10||wid<2||wid>10);
+                
+                //Switch length and width if width is greater than length
+                if(wid>len){
+                    unsigned short temp = len;//Switching variable
+                    len = wid;
+                    wid = temp;
+                }
+                
+                //Output the rectangle to the screen
+                for(unsigned short c1 = 0;c1<wid;c1++){
+                    cout<<"     ";
+                    for(unsigned short c2 = 0;c2<len;c2++){
+                        cout<<"X";
+                    }
+                    cout<<endl;
+                }
+                //End problem 9
+                cout<<endl;
+                break;
+            }
+            case(10): {
+                //Short problem description
                 cout<<"Read students first names from a file and determine which should\n"
                     <<"be first in line and which should be last alphabetically.\n\n";
-                //Begin problem 8
+                //Begin problem 10
                 //Declare variables
                 const unsigned short N_SIZE = 25;//Maximum size for a name including delimiter
                 char c_name[N_SIZE];//The current name being read by the file
@@ -364,22 +440,8 @@ int main(int argc, char** argv) {
                     //Close the input file
                     in_file.close();
                 }
-                //End problem 8
-                cout<<endl;
-                break;
-            }
-            case(9):
-            {
-                //Short problem description
-                //Begin problem 9
-                //End problem 9
-                break;
-            }
-            case(10):
-            {
-                //Short problem description
-                //Begin problem 10
                 //End problem 10
+                cout<<endl;
                 break;
             }
             case(11):
