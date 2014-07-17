@@ -22,7 +22,6 @@ using namespace std;
 
 //Global Constants
 const unsigned short DEC_PCT_CNV = 100;//Conversation from decimal to percent
-const unsigned short PCT_100 = 100;//One hundred percent
 
 //Function Prototypes
 
@@ -32,7 +31,7 @@ int main(int argc, char** argv) {
     //Declare variables
     //Constants
     const unsigned short MGS_MAX = 6;//Maximum number of missed guesses
-    const unsigned short GS_MAX = 17;//Maximum possible number of guessed letters
+    const unsigned short GS_MAX = 21;//Maximum possible number of guessed letters
     const unsigned short W_MAX = 200;//Maximum number of words to load
     //Main game variables
     string words[W_MAX];//Array of loaded words
@@ -42,7 +41,6 @@ int main(int argc, char** argv) {
     int a_len;//Length of the answer word
     int gs_num;//The number of guesses so far
     int gs_misd;//The number of missed guesses (current game only)
-    int w_ld = 0;//The number of words loaded (cannot exceed W_MAX)
     //Inputs
     char m_chse;//The menu choice
     char guess;//The current guess
@@ -58,9 +56,10 @@ int main(int argc, char** argv) {
     //Flags
     bool running;//A flag used to determine if the current instance of hangman is over
     bool is_match;//A flag used to determine if the guessed letter was in the answer
-    //File streams
+    //File streams and variables
     fstream stats;//Stream for the statistics file
     ifstream w_file;//Stream for the words file
+    int w_ld = 0;//The number of words loaded (cannot exceed W_MAX)
     
     //Begin setup for the game
     //Load the necessary data for statistics and words
@@ -206,7 +205,7 @@ int main(int argc, char** argv) {
                         //missed guesses, the user loses
                         if(gs_misd >= MGS_MAX){
                             //Output a losing message
-                            cout<<"You lost...\n";
+                            cout<<"You have been hung!\n";
                             cout<<"The word was: "<<answer<<endl;
                             //Set the status of the game to not running
                             running = false;
@@ -249,12 +248,12 @@ int main(int argc, char** argv) {
                 cout<<"Games won:                     "<<setw(5)<<gms_won<<endl;
                 cout<<"Games lost:                    "<<setw(5)<<gms_lst<<endl;
                 cout<<"Percentage of games won:       "<<setw(5)<<pgms_won<<"%\n";
-                cout<<"Percentage of games lost:      "<<setw(5)<<PCT_100-pgms_won<<"%\n";
+                cout<<"Percentage of games lost:      "<<setw(5)<<100-pgms_won<<"%\n";
                 cout<<"Total guesses:                 "<<setw(5)<<gs_tot<<endl;
                 cout<<"Correct guesses:               "<<setw(5)<<gs_cor<<endl;
                 cout<<"Missed guesses:                "<<setw(5)<<gs_miss<<endl;
                 cout<<"Percentage of correct guesses: "<<setw(5)<<pgs_cor<<"%\n";
-                cout<<"Percentage of missed guesses:  "<<setw(5)<<PCT_100-pgs_cor<<"%\n\n";
+                cout<<"Percentage of missed guesses:  "<<setw(5)<<100-pgs_cor<<"%\n\n";
                 break;
             }
             case('4'):{//If 4 quit the program
