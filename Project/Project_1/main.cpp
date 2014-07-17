@@ -263,7 +263,7 @@ int main(int argc, char** argv) {
             }
             default:{//Otherwise the input is invalid
                 //Output that the input is not valid and ask again
-                cout<<"Invalid input, please enter a number from 1 to 3.\n\n";
+                cout<<"Invalid input, please enter a number from 1 to 4.\n\n";
             }
         }
     }while(m_chse != '4');
