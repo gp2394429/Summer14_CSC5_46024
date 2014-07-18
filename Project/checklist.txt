@@ -1,5 +1,0 @@
-primitive data types
-i/o formatting
-read/write to file
-branching (if/else)
-loops (while/for)

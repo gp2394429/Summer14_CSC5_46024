@@ -21,7 +21,7 @@ using namespace std;
 //User Defined Libraries
 
 //Global Constants
-const unsigned short DEC_PCT_CNV = 100;//Conversation from decimal to percent
+const unsigned short DEC_PCT_CNV = 100;//Conversion from decimal to percent
 
 //Function Prototypes
 
@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
     //Constants
     const unsigned short MGS_MAX = 6;//Maximum number of missed guesses
     const unsigned short GS_MAX = 21;//Maximum possible number of guessed letters
-    const unsigned short W_MAX = 200;//Maximum number of words to load
+    const unsigned short W_MAX = 1000;//Maximum number of words to load
     //Main game variables
     string words[W_MAX];//Array of loaded words
     string answer;//The answer to the current hangman game
@@ -49,13 +49,16 @@ int main(int argc, char** argv) {
     int gms_won;//Number of games won
     int gms_lst;//Number of games lost
     float pgms_won;//Percentage of games won
+    float pgms_lst;//Percentage of games lost
     int gs_tot;//Total number of guesses
     int gs_cor;//Number of correct guesses
     int gs_miss;//Number of missed guesses (all time)
     float pgs_cor;//Percentage of guesses correct
+    float pgs_misd;//Percentage of guesses missed
     //Flags
     bool running;//A flag used to determine if the current instance of hangman is over
     bool is_match;//A flag used to determine if the guessed letter was in the answer
+    bool was_gsd;//A flag used to determine if the user already guessed this letter
     //File streams and variables
     fstream stats;//Stream for the statistics file
     ifstream w_file;//Stream for the words file
@@ -88,7 +91,7 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
     
-    //Load up to W_MAX size of words (default is 200)
+    //Load up to W_MAX size of words (default is 1000)
     while(w_ld<W_MAX&&w_file>>words[w_ld])
         w_ld++;
 
@@ -116,7 +119,7 @@ int main(int argc, char** argv) {
         cout<<"4.                   Quit\n";
 
         //Get users choice
-        cout<<"Choose an option from above: ";
+        cout<<"Choose an option from above (1-4): ";
         cin>>m_chse;
         cout<<endl;
         
@@ -128,11 +131,11 @@ int main(int argc, char** argv) {
         switch(m_chse){
             case('1'):{
                 //Pick a random word from the words loaded and get its length
-                answer = words[rand()%w_ld];
+                answer = a_so_far = words[rand()%w_ld];
                 a_len = answer.length();
                 //Set the answer found by the user so far to empty
                 for(int i = 0;i<a_len;i++)
-                    a_so_far+='_';
+                    a_so_far[i] = '_';
                 //Set the number of guesses and missed guesses to zero
                 gs_num = gs_misd = 0;
                 //Set the guesses so far to empty
@@ -155,66 +158,81 @@ int main(int argc, char** argv) {
                     for(int i = 0;i<gs_num;i++)
                         cout<<guesses[i]<<" ";
                     cout<<endl;
+                    
+                    //Validate the guess, i.e., make sure it is in the alphabet
+                    //and that it hasn't been guessed before
+                    do{
+                        //Get a guess from the user
+                        cout<<"Guess a letter: ";
+                        cin>>guess;
 
-                    //Get a guess from the user
-                    cout<<"Guess a letter: ";
-                    cin>>guess;
-                    
-                    //Ignore all input except the first character
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    
-                    //Validate guess i.e. make sure it is in the alphabet
-                    if(isalpha(guess)){
+                        //Ignore all input except the first character
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                        //Validation
                         guess = tolower(guess);//Convert guess to lower case
-                        guesses[gs_num] = guess;//Add the guess to the guessed letters
-                        gs_num++;//Increment the number of guesses for this game by one
-
-                        //Check to see if the guess is part of the answer
-                        is_match = false;//Assume the guess is not part of the answer
-                        for(int i = 0;i<a_len;i++){
-                            //If the guess is part of the answer, then update 
-                            //the part of the answer the user has gotten so far
-                            //and indicate there was a match
-                            if(answer[i] == guess){
-                                a_so_far[i] = guess;
-                                is_match = true;
-                            }
+                        was_gsd = false;//Assume the guess was not already guessed
+                        //Check to see if the guess was already guessed
+                        for(int i = 0;i<gs_num;i++){
+                               if(guesses[i] == guess){
+                                   was_gsd = true;   
+                                   break;//Break out if it was guessed already
+                           }
                         }
+                        //If it was guessed already, print that the user guessed
+                        //that letter already
+                        if(was_gsd)
+                            cout<<"Oops! You already guessed that letter\n";
+                        //If the guess isn't in the alphabet, print an error message
+                        if(!isalpha(guess))
+                            cout<<"Invalid input! Please enter a letter from a to z\n";
+                    }while(was_gsd || !isalpha(guess));
+                    
+                    //Once we have valid input, continue the game as normal
+                    guesses[gs_num] = guess;//Add the guess to guesses
+                    gs_num++;//Increment guesses for this game by one
 
-                        //If the guess was in the answer, increment the correct guesses
-                        if(is_match)
-                            gs_cor++;
-                        //If it wasn't, then increment the missed guesses
-                        else
-                            gs_misd++;
-
-                        //If the answer the user has found so far is the same as
-                        //the answer, then the user wins
-                        if(!(answer.compare(a_so_far))){
-                            //Output a winning message
-                            cout<<"Congratulations, you've won!\n";
-                            cout<<"The word was: "<<answer<<endl;
-                            //Increment the games won
-                            gms_won++;
-                            //Set the status of the game to not running
-                            running = false;
-                        }
-
-                        //If the guesses missed is equal to the max number of 
-                        //missed guesses, the user loses
-                        if(gs_misd >= MGS_MAX){
-                            //Output a losing message
-                            cout<<"You have been hung!\n";
-                            cout<<"The word was: "<<answer<<endl;
-                            //Set the status of the game to not running
-                            running = false;
+                    //Check to see if the guess is part of the answer
+                    is_match = false;//Assume guess is not part of the answer
+                    for(int i = 0;i<a_len;i++){
+                        //If the guess is part of the answer, then update 
+                        //the part of the answer the user has gotten so far
+                        //and indicate there was a match
+                        if(answer[i] == guess){
+                            a_so_far[i] = guess;
+                            is_match = true;
                         }
                     }
-                    else{
-                        //Output an error message for the input
-                        cout<<endl;
-                        cout<<"Invalid input! Please enter a letter from a to z\n"; 
+
+                    //If the guess was in the answer, increment the 
+                    //correct guesses
+                    if(is_match)
+                        gs_cor++;
+                    //If it wasn't, then increment the missed guesses
+                    else
+                        gs_misd++;
+
+                    //If the answer the user has found so far is the same as
+                    //the answer, then the user wins
+                    if(!(answer.compare(a_so_far))){
+                        //Output a winning message
+                        cout<<"Congratulations, you've won!\n";
+                        cout<<"The word was: "<<answer<<endl;
+                        //Increment the games won
+                        gms_won++;
+                        //Set the status of the game to not running
+                        running = false;
+                    }
+
+                    //If the guesses missed is equal to the max number of 
+                    //missed guesses, the user loses
+                    if(gs_misd >= MGS_MAX){
+                        //Output a losing message
+                        cout<<"You have been hung!\n";
+                        cout<<"The word was: "<<answer<<endl;
+                        //Set the status of the game to not running
+                        running = false;
                     }
                     cout<<endl;
                 }
@@ -239,21 +257,31 @@ int main(int argc, char** argv) {
                 //and percentage of guesses correct
                 gms_lst = gms_tot-gms_won;
                 gs_miss = gs_tot-gs_cor;
-                pgms_won = (static_cast<float>(gms_won)/gms_tot)*DEC_PCT_CNV;
-                pgs_cor = (static_cast<float>(gs_cor)/gs_tot)*DEC_PCT_CNV;
+                if(gms_tot > 0){
+                    pgms_won = (static_cast<float>(gms_won)/gms_tot)*DEC_PCT_CNV;
+                    pgms_lst = 100-pgms_won;
+                }
+                else
+                    pgms_won = pgms_lst = 0;
+                if(gs_tot > 0){
+                    pgs_cor = (static_cast<float>(gs_cor)/gs_tot)*DEC_PCT_CNV;
+                    pgs_misd = 100-pgs_cor;
+                }
+                else
+                    pgs_cor = pgs_misd = 0;
                 
                 //Output statistics
                 cout<<"--------------------Statistics-------------------\n";
-                cout<<"Games played:                  "<<setw(5)<<gms_tot<<endl;
-                cout<<"Games won:                     "<<setw(5)<<gms_won<<endl;
-                cout<<"Games lost:                    "<<setw(5)<<gms_lst<<endl;
-                cout<<"Percentage of games won:       "<<setw(5)<<pgms_won<<"%\n";
-                cout<<"Percentage of games lost:      "<<setw(5)<<100-pgms_won<<"%\n";
-                cout<<"Total guesses:                 "<<setw(5)<<gs_tot<<endl;
-                cout<<"Correct guesses:               "<<setw(5)<<gs_cor<<endl;
-                cout<<"Missed guesses:                "<<setw(5)<<gs_miss<<endl;
-                cout<<"Percentage of correct guesses: "<<setw(5)<<pgs_cor<<"%\n";
-                cout<<"Percentage of missed guesses:  "<<setw(5)<<100-pgs_cor<<"%\n\n";
+                cout<<"Games played:                  "<<setw(6)<<gms_tot<<endl;
+                cout<<"Games won:                     "<<setw(6)<<gms_won<<endl;
+                cout<<"Games lost:                    "<<setw(6)<<gms_lst<<endl;
+                cout<<"Percentage of games won:       "<<setw(6)<<pgms_won<<"%\n";
+                cout<<"Percentage of games lost:      "<<setw(6)<<pgms_lst<<"%\n";
+                cout<<"Total guesses:                 "<<setw(6)<<gs_tot<<endl;
+                cout<<"Correct guesses:               "<<setw(6)<<gs_cor<<endl;
+                cout<<"Missed guesses:                "<<setw(6)<<gs_miss<<endl;
+                cout<<"Percentage of correct guesses: "<<setw(6)<<pgs_cor<<"%\n";
+                cout<<"Percentage of missed guesses:  "<<setw(6)<<pgs_misd<<"%\n\n";
                 break;
             }
             case('4'):{//If 4 quit the program
