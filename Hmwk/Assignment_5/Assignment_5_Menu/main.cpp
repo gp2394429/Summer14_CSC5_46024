@@ -12,13 +12,12 @@ using namespace std;
 //User Defined Libraries
 
 //Global Constants
-const unsigned short HRS_DAY = 24;//Hours in a day
-const unsigned short MIN_HR = 60;//Minutes in an hour
+
 //Function Prototypes
 bool doRepeat();//Generally useful function
 void getTime(int& hrs, int& mns);//Used in problem 1
 void milOut(int time);//Used in problem 1
-
+void compute_coins(int coin_value, int& num, int& amount_left);//Used in problem 2 (defined in the book)
 //Begin Execution
 
 int main(int argc, char** argv) {
@@ -28,7 +27,7 @@ int main(int argc, char** argv) {
     //Enter menu loop
     do{
         cout << "1.  Savitch, 8thEd, Chapter 5, Problem 2\n";
-        cout << "2.  Gaddis,  7thEd, Chapter 4, Problem 6\n";
+        cout << "2.  Savitch, 8thEd, Chapter 5, Problem 5\n";
         cout << "3.  Gaddis,  7thEd, Chapter 4, Problem 7\n";
         cout << "4.  Gaddis,  7thEd, Chapter 4, Problem 8\n";
         cout << "5.  Gaddis,  7thEd, Chapter 4, Problem 18\n";
@@ -50,6 +49,8 @@ int main(int argc, char** argv) {
                 cout<<"of time in military time.\n\n";
                 //Begin problem 1
                 //Declare variables
+                const unsigned short HRS_DAY = 24;//Hours in a day
+                const unsigned short MIN_HR = 60;//Minutes in an hour
                 //Inputs
                 int c_hours, c_mins;//Hours and minutes currently
                 int w_hours, w_mins;//Hours and minutes waited
@@ -91,7 +92,34 @@ int main(int argc, char** argv) {
             case(2):
             {
                 //Short problem description
+                cout<<"Outputs the type and amount of coins needed to make change\n\n";
                 //Begin problem 2
+                //Declare variables
+                unsigned short QUARTER = 25;//Value of a quarter
+                unsigned short DIME = 10;//Value of a dime
+                unsigned short PENNY = 1;//Value of a penny
+                unsigned short MAX_C = 99;//Maximum value of change
+                //Inputs
+                int change;//The amount of change to be made (0 <= change < 100)
+                //Outputs
+                int num = 0;//The number of a certain type of coin to be used
+                do{
+                    //Get the amount of change from the user and validate
+                    do{
+                        cout<<"How much change needs to be made?: ";
+                        cin>>change;
+                    }while(change < 0 || change > MAX_C);
+                    
+                    //Calculate and output the result
+                    cout<<change<<" cents can be given as\n";
+                    compute_coins(QUARTER, num, change);
+                    cout<<" quarter(s) ";
+                    compute_coins(DIME, num, change);
+                    cout<<" dime(s) and ";
+                    compute_coins(PENNY, num, change);
+                    cout<<" penny(pennies)\n\n";
+                    
+                }while(doRepeat());//Ask if the user wants to repeat the calculation
                 //End problem 2
                 cout << endl;
                 break;
@@ -184,7 +212,7 @@ bool doRepeat(){
     //Return true if the answer is yes
     return (answer == 'y' || answer == 'Y');
 }
-//Problem one functions
+//Problem 1 functions
 
 //Function that allows the user to input military time
 //Output is by reference
@@ -207,4 +235,26 @@ void milOut(int time){
     if(time<10)
         cout<<"0";
     cout<<time;
+}
+//Problem 2 functions
+
+//Computes the number of coins of a certain denomination that can be fit into
+//a given amount of change
+//Output by reference
+//Inputs
+    //coin_value = The value of a type of coin
+    //num = The number of coins of coin_value that can fit into amount_left
+    //amount_left = The amount of change left
+//Outputs
+    //num
+    //amount_left
+void compute_coins(int coin_value, int& num, int& amount_left){
+    //Calculate num and amount_left
+    while(amount_left >= coin_value){
+        amount_left -= coin_value;
+        num++;
+    }
+    //Output num to the screen then set it to zero
+    cout<<num;
+    num = 0;
 }
