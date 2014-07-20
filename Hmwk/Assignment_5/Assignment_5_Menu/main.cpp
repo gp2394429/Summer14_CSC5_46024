@@ -113,11 +113,11 @@ int main(int argc, char** argv) {
                     //Calculate and output the result
                     cout<<change<<" cents can be given as\n";
                     compute_coins(QUARTER, num, change);
-                    cout<<" quarter(s) ";
+                    cout<<num<<" quarter(s) ";
                     compute_coins(DIME, num, change);
-                    cout<<" dime(s) and ";
+                    cout<<num<<" dime(s) and ";
                     compute_coins(PENNY, num, change);
-                    cout<<" penny(pennies)\n\n";
+                    cout<<num<<" penny(pennies)\n\n";
                     
                 }while(doRepeat());//Ask if the user wants to repeat the calculation
                 //End problem 2
@@ -250,11 +250,6 @@ void milOut(int time){
     //amount_left
 void compute_coins(int coin_value, int& num, int& amount_left){
     //Calculate num and amount_left
-    while(amount_left >= coin_value){
-        amount_left -= coin_value;
-        num++;
-    }
-    //Output num to the screen then set it to zero
-    cout<<num;
-    num = 0;
+    num = amount_left/coin_value;
+    amount_left %= coin_value;
 }
