@@ -7,6 +7,7 @@
 
 //System Level Libraries 
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 using namespace std;
 
@@ -17,6 +18,10 @@ using namespace std;
 const float M_PER_FT = 0.3048;//Meters per foot
 const short I_PER_FT = 12;//Inches per foot
 const short CM_PER_M = 100;//Centimeters per meter
+//Used in problem 6
+const short DEC_PCT_CNV = 100;//Used for converting between decimal and percentage values
+//Used in problem 7
+const float E_GRAV = 9.8;//Acceleration due to gravity on earth in m/s^2
 
 //Function Prototypes
 //Generally useful functions
@@ -38,6 +43,12 @@ void ftInToMCm(int ft, int in, int& m, int& cm);//required by book
 float sPrtr(float sd_1, float sd_2, float sd_3);
 bool vldLens(float sd_1, float sd_2, float sd_3);
 void arPrtr(float sd_1, float sd_2, float sd_3, float& prtr, float& area);//required by book
+//Used in problem 6
+float calculateRetail(float whl_prc, float mkup);//required by book
+//Used in problem 7
+float fallingDistance(short time);//required by book
+//Used in problem 8
+float kineticEnergy(float m, float v);//required by book
 //Begin Execution
 
 int main(int argc, char** argv) {
@@ -46,14 +57,17 @@ int main(int argc, char** argv) {
     //Main menu setup and output
     //Enter menu loop
     do{
+        //Set default format for output
+        cout.unsetf(ios_base::fixed);
+        cout<<noshowpoint<<setprecision(6);
         cout << "1.  Savitch, 8thEd, Chapter 5, Problem 2\n";
         cout << "2.  Savitch, 8thEd, Chapter 5, Problem 4\n";
         cout << "3.  Savitch, 8thEd, Chapter 5, Problem 5\n";
         cout << "4.  Savitch, 8thEd, Chapter 5, Problem 6\n";
         cout << "5.  Savitch, 8thEd, Chapter 5, Problem 13\n";
-        //cout << "6.  Savitch, 8thEd, Chapter 3, Problem 1\n";
-        //cout << "7.  Savitch, 8thEd, Chapter 3, Problem 2\n";
-        //cout << "8.  Savitch, 8thEd, Chapter 3, Problem 12\n";
+        cout << "6.  Gaddis,  7thEd, Chapter 6, Problem 1\n";
+        cout << "7.  Gaddis,  7thEd, Chapter 6, Problem 3\n";
+        cout << "8.  Gaddis,  7thEd, Chapter 6, Problem 4\n";
         //cout << "9.  Savitch, 8thEd, Chapter 3, Problem 15\n";
         //cout << "10. Savitch, 8thEd, Chapter 3, Problem 16\n";
         cout << "11. Quit the program\n";
@@ -238,7 +252,30 @@ int main(int argc, char** argv) {
             case(6):
             {
                 //Short problem description
+                cout<<"Calculate retail price give wholesale price and markup percentage.\n\n";
                 //Begin problem 6
+                //Declare variables
+                //Inputs
+                float whl_prc;//Wholesale price
+                float mkup;//Mark up percentage
+                //Outputs
+                float retail;//Retail price
+                
+                //Get and validate input
+                do{
+                    cout<<"Enter the wholesale price and markup percentage\n";
+                    cout<<"Format [wp m%]: ";
+                    cin>>whl_prc>>mkup;
+                    cout<<endl;
+                }while(whl_prc<0 || mkup<0);
+                
+                //Calculate retail price
+                retail = calculateRetail(whl_prc, mkup);
+                
+                //Format output for currency
+                cout<<fixed<<showpoint<<setprecision(2);
+                //Output result
+                cout<<"The retail price is: $"<<retail<<endl;
                 //End problem 6
                 cout << endl;
                 break;
@@ -246,7 +283,16 @@ int main(int argc, char** argv) {
             case(7):
             {
                 //Short problem description
+                cout<<"Calculate the distance an object travels in free fall.\n\n";
                 //Begin problem 7
+                //Declare variables
+                short time = 1;//The time in seconds the object has been falling
+                //Output the distance traveled for time intervals of one second
+                //Starting from time = 1;
+                for(time;time<=10;time++){
+                    cout<<"The distance traveled in "<<time<<" second(s) is: ";
+                    cout<<fallingDistance(time)<<" meters\n";
+                }
                 //End problem 7
                 cout << endl;
                 break;
@@ -254,7 +300,26 @@ int main(int argc, char** argv) {
             case(8):
             {
                 //Short problem description
+                cout<<"Determine an objects kinetic energy given its mass and velocity.\n\n";
                 //Begin problem 8
+                //Declare variables
+                //Inputs
+                float mass;//Mass of the object in kilograms
+                float velocity;//Velocity of the object in meters/second
+                //Outputs
+                float k_enrgy;//Kinetic energy of the object on joules
+                
+                //Get mass and velocity from the user
+                cout<<"Enter the mass and velocity of an object\n";
+                cout<<"Format [m v]: ";
+                cin>>mass>>velocity;
+                cout<<endl;
+                 
+                //Calculate result
+                k_enrgy = kineticEnergy(mass, velocity);
+                
+                //Output result
+                cout<<"The kinetic energy of the object is: "<<k_enrgy<<" joules\n";
                 //End problem 8
                 cout << endl;
                 break;
@@ -432,7 +497,6 @@ float sPrtr(float sd_1, float sd_2, float sd_3){
     //Calculate and return the semi-perimeter
     return (sd_1+sd_2+sd_3)/2;
 }
-
 //Determines if three lengths can form a triangle
 //Formula: Three positive lengths of side a, b, and c, form a triangle iff
 //a+b>c, a+c>b, and b+c>a
@@ -465,4 +529,41 @@ void arPrtr(float sd_1, float sd_2, float sd_3, float& prtr, float& area){
     }
     else
         prtr = area = -1;
+}
+//Problem 6 functions
+
+//Calculate retail price given wholesale price and markup percentage
+//Inputs
+//  whl_prc = wholesale price
+//  mkup    = markup percentage
+//Outputs
+//  retail  = retail price
+float calculateRetail(float whl_prc, float mkup){
+    //Calculate and return retail price
+    return whl_prc+((whl_prc*mkup)/DEC_PCT_CNV);
+}
+//Problem 7 functions
+
+//Calculate the distance traveled in meters of a falling object
+//Formula: d = (1/2)*g*t^2
+//Inputs
+//  time = time in seconds the object has been falling
+//Outputs
+//  the distance the object has fallen
+float fallingDistance(short time){
+    //Calculate and return the distance fallen
+    return 0.5f*E_GRAV*time*time;
+}
+//Problem 8 functions
+
+//Calculate the kinetic energy of an object given its mass and velocity
+//Formula: KE = (1/2)*m*v^2
+//Inputs
+//  m = mass in kilograms
+//  v = velocity in meters/second
+//Outputs
+//  k_enrgy = kinetic energy of the object
+float kineticEnergy(float m, float v){
+    //Calculate and return the kinetic energy
+    return (0.5)*m*v*v;
 }
