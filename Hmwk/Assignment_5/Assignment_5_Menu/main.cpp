@@ -7,17 +7,34 @@
 
 //System Level Libraries 
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 //User Defined Libraries
 
 //Global Constants
+//Used in problem 4
+const float M_PER_FT = 0.3048;//Meters per foot
+const short I_PER_FT = 12;//Inches per foot
+const short CM_PER_M = 100;//Centimeters per meter
 
 //Function Prototypes
-bool doRepeat();//Generally useful function
-void getTime(int& hrs, int& mns);//Used in problem 1
-void milOut(int time);//Used in problem 1
-void compute_coins(int coin_value, int& num, int& amount_left);//Used in problem 2 (defined in the book)
+//Generally useful functions
+bool doRepeat();
+//Used in problem 1
+void getTime(int& hrs, int& mns);
+void milOut(int time);
+//Used in problem 2
+float average(float s1, float s2, float s3, float s4);
+float sdDevTm(float s, float avg);
+void avgSdDev(float s1, float s2, float s3, float s4, float& avg, float& std_dev);//required by book
+//Used in problem 3
+void compute_coins(int coin_value, int& num, int& amount_left);//required by book
+//Used in problem 4
+void pb4In(int& ft, int& in);//required by book
+void pb4Out(int ft, int in, int m, int cm);//required by book
+void ftInToMCm(int ft, int in, int& m, int& cm);//required by book
+
 //Begin Execution
 
 int main(int argc, char** argv) {
@@ -27,9 +44,9 @@ int main(int argc, char** argv) {
     //Enter menu loop
     do{
         cout << "1.  Savitch, 8thEd, Chapter 5, Problem 2\n";
-        cout << "2.  Savitch, 8thEd, Chapter 5, Problem 5\n";
-        cout << "3.  Gaddis,  7thEd, Chapter 4, Problem 7\n";
-        cout << "4.  Gaddis,  7thEd, Chapter 4, Problem 8\n";
+        cout << "2.  Savitch, 8thEd, Chapter 5, Problem 4\n";
+        cout << "3.  Savitch, 8thEd, Chapter 5, Problem 5\n";
+        cout << "4.  Savitch, 8thEd, Chapter 5, Problem 6\n";
         cout << "5.  Gaddis,  7thEd, Chapter 4, Problem 18\n";
         cout << "6.  Savitch, 8thEd, Chapter 3, Problem 1\n";
         cout << "7.  Savitch, 8thEd, Chapter 3, Problem 2\n";
@@ -92,8 +109,42 @@ int main(int argc, char** argv) {
             case(2):
             {
                 //Short problem description
-                cout<<"Outputs the type and amount of coins needed to make change\n\n";
+                cout<<"Compute average and standard deviation.\n\n";
                 //Begin problem 2
+                //Driver program for avgSdDev function
+                //Declare variables
+                //Inputs
+                float s1, s2, s3, s4;//User inputs for avg and std_dev
+                //Outputs
+                float avg;//Average of four numbers
+                float std_dev;//Standard deviation of four numbers
+                
+                //Loop until user has finished testing
+                do{
+                    //Get s1, s2, s3, and s4 from the user
+                    cout<<"Please enter four numbers\n";
+                    cout<<"Format [n n n n]: ";
+                    cin>>s1>>s2>>s3>>s4;
+                    cout<<endl;
+                    
+                    //Calculate the average and standard deviation
+                    avgSdDev(s1, s2, s3, s4, avg, std_dev);
+                    
+                    //Output the result
+                    cout<<"The average is:            "<<avg<<endl;
+                    cout<<"The standard deviation is: "<<std_dev<<endl<<endl;
+                    
+                }while(doRepeat());//Ask if the user wants to repeat the calculation
+                
+                //End problem 2
+                cout << endl;
+                break;
+            }
+            case(3):
+            {
+                //Short problem description
+                cout<<"Outputs the type and amount of coins needed to make change\n\n";
+                //Begin problem 3
                 //Declare variables
                 unsigned short QUARTER = 25;//Value of a quarter
                 unsigned short DIME = 10;//Value of a dime
@@ -120,14 +171,6 @@ int main(int argc, char** argv) {
                     cout<<num<<" penny(pennies)\n\n";
                     
                 }while(doRepeat());//Ask if the user wants to repeat the calculation
-                //End problem 2
-                cout << endl;
-                break;
-            }
-            case(3):
-            {
-                //Short problem description
-                //Begin problem 3
                 //End problem 3
                 cout << endl;
                 break;
@@ -135,7 +178,27 @@ int main(int argc, char** argv) {
             case(4):
             {
                 //Short problem description
+                cout<<"Convert feet and inches to meters and centimeters.\n\n";
                 //Begin problem 4
+                //Declare variables
+
+                //Inputs
+                int ft, ichs;//Feet and inches
+                //Outputs
+                int mtrs, cmetrs;//Meters and centimeters
+                
+                //Loop until the user is finished
+                do{
+                    //Get user input
+                    pb4In(ft, ichs);
+  
+                    //Calculate values
+                    ftInToMCm(ft, ichs, mtrs, cmetrs);
+                    
+                    //Output result
+                    pb4Out(ft, ichs, mtrs, cmetrs);
+                    
+                }while(doRepeat());
                 //End problem 4
                 cout << endl;
                 break;
@@ -238,6 +301,41 @@ void milOut(int time){
 }
 //Problem 2 functions
 
+//Calculates the average of four numbers
+//Inputs
+//  s1, s2, s3, s4 = four numbers
+//Outputs
+//  the average value of s1, s2, s3, s4
+float average(float s1, float s2, float s3, float s4){
+    //Calculate and return the average
+    return (s1+s2+s3+s4)/4;
+}
+//Calculates one standard deviation term
+//Inputs
+//  s = a single number
+//  avg = the average of four values
+//Outputs
+//  the standard deviation of s1, s2, s3, s4
+float sdDevTm(float s, float avg){
+    //Calculate and return one term of the standard deviation
+    return (s-avg)*(s-avg);
+}
+//Calculate the average and standard deviation of four numbers
+//Outputs by reference
+//Inputs
+//  s1, s2, s3, s4 = four numbers
+//Outputs
+//  avg = average of s1, s2, s3, s4
+//  std_dev = standard deviation of s1, s2, s3, s4
+void avgSdDev(float s1, float s2, float s3, float s4, float& avg, float& std_dev){
+    //Calculate average
+    avg = average(s1, s2, s3, s4);
+    //Calculate standard deviation
+    std_dev = sqrt(average(sdDevTm(s1, avg), sdDevTm(s2, avg),
+                           sdDevTm(s3, avg), sdDevTm(s4, avg)));
+}
+//Problem 3 functions
+
 //Computes the number of coins of a certain denomination that can be fit into
 //a given amount of change
 //Output by reference
@@ -252,4 +350,50 @@ void compute_coins(int coin_value, int& num, int& amount_left){
     //Calculate num and amount_left
     num = amount_left/coin_value;
     amount_left %= coin_value;
+}
+//Problem 4 functions
+
+//Gets an input of feet and inches from the user
+//Output by reference
+//No Inputs
+//Outputs
+//  ft = feet
+//  in = inches
+void pb4In(int& ft, int& in){
+    //Get input from user
+    cout<<"Please enter a length in feet and inches\n";
+    cout<<"Format [ft in]: ";
+    cin>>ft>>in;
+    cout<<endl;
+}
+//Outputs how many meters and centimeters are equivalent to feet and inches
+//No outputs
+//Inputs
+//  ft = feet
+//  in = inches
+//  m  = meters
+//  cm = centimeters
+void pb4Out(int ft, int in, int m, int cm){
+    cout<<ft<<" feet and "<<in<<" inches is equivalent to: ";
+    cout<<m<<" meters and "<<cm<<" centimeters\n\n";
+}
+//Calculate the meters and centimeters given feet and inches
+//Output by reference
+//Inputs
+//  ft = feet
+//  in = inches
+//Outputs
+// m  = meters
+// cm = centimeters
+void ftInToMCm(int ft, int inches, int& m, int& cm){
+    //Define variables
+    float ft_float = ft;//Feet as a float
+    float m_float;//Meters as a float
+    
+    //Calculate values
+    ft_float += static_cast<float>(inches)/I_PER_FT;//Convert inches to feet
+    m_float = ft_float*M_PER_FT;//Convert feet to meters
+    m = m_float;//Get the integer part of meters
+    m_float -= m;//Get the decimal part of meters
+    cm = m_float*CM_PER_M;//Get the integer part of centimeters
 }
