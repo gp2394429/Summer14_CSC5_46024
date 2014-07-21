@@ -49,6 +49,13 @@ float calculateRetail(float whl_prc, float mkup);//required by book
 float fallingDistance(short time);//required by book
 //Used in problem 8
 float kineticEnergy(float m, float v);//required by book
+//Used in problem 9
+void getScore(int& score);
+int findLowest(int s1, int s2, int s3, int s4, int s5);
+void calcAverage(int s1, int s2, int s3, int s4, int s5);
+//Used in problem 10
+bool isPrime(int num);
+
 //Begin Execution
 
 int main(int argc, char** argv) {
@@ -68,8 +75,8 @@ int main(int argc, char** argv) {
         cout << "6.  Gaddis,  7thEd, Chapter 6, Problem 1\n";
         cout << "7.  Gaddis,  7thEd, Chapter 6, Problem 3\n";
         cout << "8.  Gaddis,  7thEd, Chapter 6, Problem 4\n";
-        //cout << "9.  Savitch, 8thEd, Chapter 3, Problem 15\n";
-        //cout << "10. Savitch, 8thEd, Chapter 3, Problem 16\n";
+        cout << "9.  Gaddis,  7thEd, Chapter 6, Problem 7\n";
+        cout << "10. Gaddis,  7thEd, Chapter 6, Problem 9\n";
         cout << "11. Quit the program\n";
         cout << "Enter an integer from 1 to 11 to select an option above: ";
         cin>>m_choice;
@@ -327,7 +334,22 @@ int main(int argc, char** argv) {
             case(9):
             {
                 //Short problem description
+                cout<<"Drop the lowest out of five scores and average the remaining four.\n\n";
                 //Begin problem 9
+                //Declare variables
+                //Inputs
+                int s1, s2, s3, s4, s5;//The five scores
+                
+                //Get input from user
+                cout<<"Please enter 5 scores\n";
+                getScore(s1);
+                getScore(s2);
+                getScore(s3);
+                getScore(s4);
+                getScore(s5);
+                
+                //Calculate and display the average of the four highest scores
+                calcAverage(s1, s2, s3, s4, s5);
                 //End problem 9
                 cout << endl;
                 break;
@@ -335,7 +357,21 @@ int main(int argc, char** argv) {
             case(10):
             {
                 //Short problem description
+                cout<<"Demonstrate the isPrime() function by calling it will values from 2 to 100.\n\n";
                 //Begin problem 10
+                //Declare variables
+                const int MAX_PNT = 5;//The maximum number of values to be printed to a single line
+                const int MAX_CNT = 100;//Upper bound on prime numbers
+                int pnt_num = 0;//The number of prime numbers printed to a line so far
+                cout<<"Prime numbers from 2 to 100:\n";
+                for(int count = 2;count<=MAX_CNT;count++){
+                    if(isPrime(count)){
+                        cout<<setw(2)<<count<<" ";
+                        pnt_num++;
+                        if(pnt_num%MAX_PNT == 0)
+                            cout<<endl;
+                    }
+                }
                 //End problem 10
                 cout << endl;
                 break;
@@ -566,4 +602,56 @@ float fallingDistance(short time){
 float kineticEnergy(float m, float v){
     //Calculate and return the kinetic energy
     return (0.5)*m*v*v;
+}
+//Problem 9 functions
+
+//Get and validate input from the user
+//Valid score if >= 0 and <= 100
+//Output by reference
+//No inputs
+//Output
+//  score
+void getScore(int& score){
+    do{
+        cout<<"Enter a score (from 0 up to 100): ";
+        cin>>score;
+        if(score<0 || score>100)
+            cout<<"Invalid score, try again.\n";
+    }while(score<0 || score>100);
+}
+//Find the lowest out of five scores
+//Inputs
+//  s1, s2, s3, s4, s5 = five scores
+//Output
+//  lowest = lowest score
+int findLowest(int s1, int s2, int s3, int s4, int s5){
+    int lowest = s1;
+    lowest = min(lowest, s2);
+    lowest = min(lowest, s3);
+    lowest = min(lowest, s4);
+    return min(lowest, s5);
+}
+//Calculate and output the average of four scores, dropping one out of five scores
+//No outputs
+//Inputs
+//  s1, s2, s3, s4, s5 = five scores
+void calcAverage(int s1, int s2, int s3, int s4, int s5){
+    //Calculate average
+    float avg = (s1+s2+s3+s4+s5-findLowest(s1, s2, s3, s4 ,s5))/4.0f;
+    //Output
+    cout<<"The average is: "<<avg<<endl;
+}
+//Problem 10 functions
+
+//Determine whether an integer is prime
+//Inputs
+//  num = an integer
+//Outputs
+//  true or false value
+bool isPrime(int num){
+    for(int c = 2;c<num;c++){
+        if(num%c == 0)
+            return false;
+    }
+    return true;
 }
