@@ -34,7 +34,10 @@ void compute_coins(int coin_value, int& num, int& amount_left);//required by boo
 void pb4In(int& ft, int& in);//required by book
 void pb4Out(int ft, int in, int m, int cm);//required by book
 void ftInToMCm(int ft, int in, int& m, int& cm);//required by book
-
+//Used in problem 5
+float sPrtr(float sd_1, float sd_2, float sd_3);
+bool vldLens(float sd_1, float sd_2, float sd_3);
+void arPrtr(float sd_1, float sd_2, float sd_3, float& prtr, float& area);//required by book
 //Begin Execution
 
 int main(int argc, char** argv) {
@@ -47,12 +50,12 @@ int main(int argc, char** argv) {
         cout << "2.  Savitch, 8thEd, Chapter 5, Problem 4\n";
         cout << "3.  Savitch, 8thEd, Chapter 5, Problem 5\n";
         cout << "4.  Savitch, 8thEd, Chapter 5, Problem 6\n";
-        cout << "5.  Gaddis,  7thEd, Chapter 4, Problem 18\n";
-        cout << "6.  Savitch, 8thEd, Chapter 3, Problem 1\n";
-        cout << "7.  Savitch, 8thEd, Chapter 3, Problem 2\n";
-        cout << "8.  Savitch, 8thEd, Chapter 3, Problem 12\n";
-        cout << "9.  Savitch, 8thEd, Chapter 3, Problem 15\n";
-        cout << "10. Savitch, 8thEd, Chapter 3, Problem 16\n";
+        cout << "5.  Savitch, 8thEd, Chapter 5, Problem 13\n";
+        //cout << "6.  Savitch, 8thEd, Chapter 3, Problem 1\n";
+        //cout << "7.  Savitch, 8thEd, Chapter 3, Problem 2\n";
+        //cout << "8.  Savitch, 8thEd, Chapter 3, Problem 12\n";
+        //cout << "9.  Savitch, 8thEd, Chapter 3, Problem 15\n";
+        //cout << "10. Savitch, 8thEd, Chapter 3, Problem 16\n";
         cout << "11. Quit the program\n";
         cout << "Enter an integer from 1 to 11 to select an option above: ";
         cin>>m_choice;
@@ -206,7 +209,28 @@ int main(int argc, char** argv) {
             case(5):
             {
                 //Short problem description
+                cout<<"Calculate the area and perimeter of a triangle.\n\n";
                 //Begin problem 5
+                //Declare variables
+                //Inputs
+                float side_1, side_2, side_3;//Sides of the triangle
+                //Outputs
+                float prtr;//Perimeter of the triangle
+                float area;//Area of the triangle
+                
+                //Get user input
+                cout<<"Enter the lengths of three sides of a triangle\n";
+                cout<<"Format [a b c]: ";
+                cin>>side_1>>side_2>>side_3;
+                arPrtr(side_1, side_2, side_3, prtr, area);
+                
+                //Output the perimeter and area
+                if(area < 0 || prtr < 0)
+                    cout<<"Invalid lengths, cannot form a triangle.\n";
+                else{
+                    cout<<"The perimeter is: "<<prtr<<endl;
+                    cout<<"The area is     : "<<area<<endl;
+                }
                 //End problem 5
                 cout << endl;
                 break;
@@ -396,4 +420,49 @@ void ftInToMCm(int ft, int inches, int& m, int& cm){
     m = m_float;//Get the integer part of meters
     m_float -= m;//Get the decimal part of meters
     cm = m_float*CM_PER_M;//Get the integer part of centimeters
+}
+//Problem 5 functions
+
+//Calculate the semi-perimeter of a triangle given the lengths of 3 sides
+//Inputs
+//  sd_1, sd_2, sd_3 = sides of the triangle
+//Outputs
+//  s_prtr = semi-perimeter
+float sPrtr(float sd_1, float sd_2, float sd_3){
+    //Calculate and return the semi-perimeter
+    return (sd_1+sd_2+sd_3)/2;
+}
+
+//Determines if three lengths can form a triangle
+//Formula: Three positive lengths of side a, b, and c, form a triangle iff
+//a+b>c, a+c>b, and b+c>a
+//Inputs
+//  sd_1, sd_2, sd_3 = lengths of three sides
+//Outputs
+//  bool determining if the lengths can form a triangle
+bool vldLens(float sd_1, float sd_2, float sd_3){
+    return (sd_1>0 && sd_2>0 && sd_3>0 &&
+            (sd_1+sd_2)>sd_3 && (sd_1+sd_3)>sd_2 && (sd_2+sd_3)>sd_1);
+}
+//Calculate the area and perimeter of a triangle given the lengths of 3 sides
+//For invalid data (the lengths can't form a triangle), return -1 for both
+//the area and perimeter.
+//Output by reference
+//Inputs
+//  sd_1, sd_2, sd_3 = sides of the triangle
+//Outputs
+//  area = area
+//  prtr = perimeter
+void arPrtr(float sd_1, float sd_2, float sd_3, float& prtr, float& area){
+    //Declare variables
+    float s_prtr;//Semi-perimeter
+    
+    //Check that the input is valid and calculate results
+    if(vldLens(sd_1, sd_2, sd_3)){
+        s_prtr = sPrtr(sd_1, sd_2, sd_3);
+        prtr = sd_1+sd_2+sd_3;
+        area = sqrt(s_prtr*(s_prtr-sd_1)*(s_prtr-sd_2)*(s_prtr-sd_3));
+    }
+    else
+        prtr = area = -1;
 }
