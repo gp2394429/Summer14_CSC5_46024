@@ -259,7 +259,7 @@ int main(int argc, char** argv) {
             case(6):
             {
                 //Short problem description
-                cout<<"Calculate retail price give wholesale price and markup percentage.\n\n";
+                cout<<"Calculate retail price given wholesale price and markup percentage.\n\n";
                 //Begin problem 6
                 //Declare variables
                 //Inputs
