@@ -294,9 +294,10 @@ int main(int argc, char** argv) {
                 //Begin problem 7
                 //Declare variables
                 short time = 1;//The time in seconds the object has been falling
+                const short MAX_T = 10;//The maximum time the object falls
                 //Output the distance traveled for time intervals of one second
                 //Starting from time = 1;
-                for(time;time<=10;time++){
+                for(time;time<=MAX_T;time++){
                     cout<<"The distance traveled in "<<time<<" second(s) is: ";
                     cout<<fallingDistance(time)<<" meters\n";
                 }
@@ -612,12 +613,14 @@ float kineticEnergy(float m, float v){
 //Output
 //  score
 void getScore(int& score){
+    //Declare variables
+    const short S_MAX = 100;//Maximum score
     do{
         cout<<"Enter a score (from 0 up to 100): ";
         cin>>score;
-        if(score<0 || score>100)
+        if(score<0 || score>S_MAX)
             cout<<"Invalid score, try again.\n";
-    }while(score<0 || score>100);
+    }while(score<0 || score>S_MAX);
 }
 //Find the lowest out of five scores
 //Inputs
