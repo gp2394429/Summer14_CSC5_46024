@@ -358,7 +358,7 @@ int main(int argc, char** argv) {
             case(10):
             {
                 //Short problem description
-                cout<<"Demonstrate the isPrime() function by calling it will values from 2 to 100.\n\n";
+                cout<<"Demonstrate the isPrime() function by calling it with values from 2 to 100.\n\n";
                 //Begin problem 10
                 //Declare variables
                 const int MAX_PNT = 5;//The maximum number of values to be printed to a single line
