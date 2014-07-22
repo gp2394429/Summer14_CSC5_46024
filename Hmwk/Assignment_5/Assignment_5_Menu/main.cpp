@@ -18,6 +18,8 @@ using namespace std;
 const float M_PER_FT = 0.3048;//Meters per foot
 const short I_PER_FT = 12;//Inches per foot
 const short CM_PER_M = 100;//Centimeters per meter
+const unsigned short HRS_DAY = 24;//Hours in a day
+const unsigned short MIN_HR = 60;//Minutes in an hour
 //Used in problem 6
 const short DEC_PCT_CNV = 100;//Used for converting between decimal and percentage values
 //Used in problem 7
@@ -90,8 +92,6 @@ int main(int argc, char** argv) {
                 cout<<"of time in military time.\n\n";
                 //Begin problem 1
                 //Declare variables
-                const unsigned short HRS_DAY = 24;//Hours in a day
-                const unsigned short MIN_HR = 60;//Minutes in an hour
                 //Inputs
                 int c_hours, c_mins;//Hours and minutes currently
                 int w_hours, w_mins;//Hours and minutes waited
@@ -170,10 +170,10 @@ int main(int argc, char** argv) {
                 cout<<"Outputs the type and amount of coins needed to make change\n\n";
                 //Begin problem 3
                 //Declare variables
-                unsigned short QUARTER = 25;//Value of a quarter
-                unsigned short DIME = 10;//Value of a dime
-                unsigned short PENNY = 1;//Value of a penny
-                unsigned short MAX_C = 99;//Maximum value of change
+                const short QUARTER = 25;//Value of a quarter
+                const short DIME = 10;//Value of a dime
+                const short PENNY = 1;//Value of a penny
+                const short MAX_C = 99;//Maximum value of change
                 //Inputs
                 int change;//The amount of change to be made (0 <= change < 100)
                 //Outputs
