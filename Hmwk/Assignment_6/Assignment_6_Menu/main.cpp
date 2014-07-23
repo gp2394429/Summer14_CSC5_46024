@@ -7,6 +7,10 @@
 
 //System Level Libraries 
 #include <iostream>
+#include <iomanip>
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
 #include <limits>
 using namespace std;
 
@@ -25,18 +29,27 @@ void getHex(char[],const int);
 short chrInt(char,const short,const short);
 void addHexDgt(char,char,char&,bool&);
 void addHex(char[],char[],const int,char[],bool&);
+
 //Problem 2 functions
 void delete_repeats(char[],int&);//required by book
+
+//Problem 3 functions
+double stdDev(double[], int);//required by book (double also required by book)
+
 //Begin Execution
 
 int main(int argc, char** argv) {
     //Main menu setup and output
     unsigned short m_choice;
+    
+    //Seed random number generator
+    srand(static_cast<int>(time(0)));
+    
     //Enter menu loop
     do {
         cout << "1. Savitch, 8th Edition, Chapter 7, Problem 2\n";
-        cout << "2. \n";
-        cout << "3. \n";
+        cout << "2. Savitch, 8th Edition, Chapter 7, Problem 3\n";
+        cout << "3. Savitch, 8th Edition, Chapter 7, Problem 4\n";
         cout << "4. \n";
         cout << "5. \n";
         cout << "6. \n";
@@ -120,7 +133,30 @@ int main(int argc, char** argv) {
             case(3):
             {
                 //Short problem description
+                cout<<"Demonstrates a standard deviation program.\n\n";
                 //Begin problem 3
+                //Declare variables
+                const int MAX_SIZE = 25;//Maximum size of the example array
+                const int N_PER_L = 5;//Numbers to be print per line
+                double example[MAX_SIZE];//Double as per book definition
+                int act_size = rand()%(MAX_SIZE-N_PER_L+1)+N_PER_L;//Number of values in the array (between 5 and 25)
+                
+                //Fill the example array with random numbers
+                for(int i = 0;i<act_size;i++)
+                    example[i] = static_cast<double>(rand())/rand();
+                
+                //Calculate the standard deviation and output to the screen
+                cout<<"Numbers in the array:\n";
+                for(int i = 0;i<act_size;i++){
+                    cout<<setw(10)<<example[i];
+                    if((i+1)%(N_PER_L+1) == 0)
+                        cout<<endl;
+                    else
+                        cout<<" ";
+                }
+                cout<<endl;
+                cout<<"The standard deviation is: "<<stdDev(example, act_size);
+                cout<<endl;
                 //End problem 3
                 cout << endl;
                 break;
@@ -385,4 +421,35 @@ void delete_repeats(char chr_arr[],int& size){
             }
         }
     }
+}
+//Problem 3 functions
+
+//Calculate the standard deviation for an array of numbers
+//Formula: sqrt((sigma from i=1 to N of (x_i-x_bar)^2)/N)
+//         where x_bar = the average of x_1 to x_N
+//Inputs
+//  num_arr = array of numbers used to calculate the standard deviation
+//  size = the number of numbers in the array
+//Outputs
+//  the standard deviation of all the numbers in num_arr
+double stdDev(double num_arr[], int size){
+    //Declare variables
+    double avg = 0;//The average value of all the numbers in the array
+    double result = 0;//The result of the standard deviation calculation
+    
+    //Calculate the average
+    //Sum all the numbers in the array
+    for(int i = 0;i<size;i++)
+        avg += num_arr[i];
+    //Divide by the number of elements in the array
+    avg /= size;
+    
+    //Get the sum of all the standard deviation terms
+    for(int i = 0;i<size;i++){
+        double x = num_arr[i];
+        result += (x-avg)*(x-avg);
+    }
+    
+    //Divide the result by the number of elements, take the square root, and return
+    return sqrt(result/size);
 }
