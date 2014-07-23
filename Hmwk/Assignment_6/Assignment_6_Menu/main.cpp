@@ -17,6 +17,7 @@ using namespace std;
 //Function Prototypes
 //Generally useful functions
 bool doRepeat();
+int getChLen(const char[], const int);
 
 //Problem 1 functions
 bool isHexDgt(char);
@@ -24,6 +25,8 @@ void getHex(char[],const int);
 short chrInt(char,const short,const short);
 void addHexDgt(char,char,char&,bool&);
 void addHex(char[],char[],const int,char[],bool&);
+//Problem 2 functions
+void delete_repeats(char[],int&);//required by book
 //Begin Execution
 
 int main(int argc, char** argv) {
@@ -87,7 +90,29 @@ int main(int argc, char** argv) {
             case(2):
             {
                 //Short problem description
+                cout<<"Delete repeated characters in a character array.\n\n";
                 //Begin problem 2
+                //Declare variables
+                const int MAX_SIZE = 21;//Max size of the character array plus null terminator
+                char chr_arr[MAX_SIZE];//Character array
+                int act_size;
+                
+                //Get a string of characters from the user
+                cout<<"Enter a string of up to 20 characters: ";
+                cin.getline(chr_arr, MAX_SIZE);
+                
+                //Determine how many characters were added to the array
+                act_size = getChLen(chr_arr, MAX_SIZE);
+                act_size--;//Assume no null delimeter
+                cout<<act_size<<endl;
+                //Remove all repeated characters from the array
+                delete_repeats(chr_arr, act_size);
+                
+                //Output results assuming no null delimiter
+                cout<<"The array with no repeated characters: ";
+                for(int i = 0;i<act_size;i++)
+                    cout<<chr_arr[i];
+                cout<<endl;
                 //End problem 2
                 cout << endl;
                 break;
@@ -179,7 +204,23 @@ bool doRepeat(){
     
     //Return true if the answer is yes
     return (answer == 'y' || answer == 'Y');
+}
+//Determine how full an array of characters is assuming it is null terminated
+//Inputs
+//  chr_arr = character array
+//  SIZE = maximum size of the array
+//Outputs
+//  act_size = the number of elements being used
+int getChLen(const char chr_arr[],const int SIZE){
+    int act_size = 0;
+    for(act_size;act_size<SIZE;act_size++){
+        if(chr_arr[act_size] == '\0'){
+            act_size++;
+            break;
+        }
     }
+    return act_size;
+}
 //Problem 1 functions
 //Determine if a character can be a hexidecimal digit
 //Inputs
@@ -244,7 +285,7 @@ void getHex(char hex_num[],const int SIZE){
 //  num_enc = Conversion from a character representation of a hex number to a base 10 number
 //Outputs
 //  A base 10 representation of a character representation of a hex number or character
-short chrNum(char chr, const short CHR_ENC, const short NUM_ENC){
+short chrNum(char chr,const short CHR_ENC,const short NUM_ENC){
     if(chr>='0' && chr<='9')
         return static_cast<short>(chr)-NUM_ENC;
     else
@@ -257,7 +298,7 @@ short chrNum(char chr, const short CHR_ENC, const short NUM_ENC){
 //Outputs
 //  a_chr = the answer of the addition
 //  carry = flag to determine if there was carry over
-void addHexDgt(char chr_1, char chr_2, char& a_chr, bool& carry){
+void addHexDgt(char chr_1,char chr_2,char& a_chr,bool& carry){
     //Declare variables
     const short CHR_ENC = 87;//Conversion from a character representation of a hex character in base 10
     const short NUM_ENC = 48;//Conversion from a character representation of a hex number in base 10
@@ -300,4 +341,48 @@ void addHex(char h_num_1[],char h_num_2[],const int SIZE,char answer[],bool& ove
     }
     //If there is a carry on the final addition, then there is an overflow
     overflow = carry;
+}
+//Problem 2 functions
+
+//Deletes repeated characters in an array assuming no null terminator and
+//keeps the array organized
+//Outputs by reference
+//Inputs
+//  chr_arr = the original character array
+//  size = the original size
+//Outputs
+//  chr_arr = the new array with no repeated characters
+//  size = the new size of the array
+void delete_repeats(char chr_arr[],int& size){
+    //Declare variables
+    char cur;//Current character to check the array for repeats of
+    int start = 0;//Current starting index
+    
+    //Enter deletion loop
+    for(start;start<(size-1);start++){
+        //Set the current character to be examined to current starting point
+        cur = chr_arr[start];
+        //Look at each character to the right of the starting point
+        for(int i = start+1;i<size;i++){
+            //If one of these characters is the same as the current character,
+            //remove it by shifting all characters to the left
+            if(cur == chr_arr[i]){
+                //If the matching character is at the end of the array
+                //replace it will a null terminator
+                if(i == size-1)
+                    chr_arr[i] = '\0';
+                //Shift all character to the left
+                else{
+                    for(int j = i, k = i+1;k<size;j++,k++)
+                        chr_arr[j] = chr_arr[k];
+                }
+                //Decrement the actual size of the array by one
+                size--;
+                //Keep the index i at the same location. Because we have shifted
+                //the elements to the left, we haven't looked at the element at
+                //the ith location yet
+                i--;
+            }
+        }
+    }
 }
