@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
+#include <fstream>
 #include <limits>
 using namespace std;
 
@@ -36,6 +37,13 @@ void delete_repeats(char[],int&);//required by book
 //Problem 3 functions
 double stdDev(double[], int);//required by book (double also required by book)
 
+//Problem 4 functions
+void pb4Out(const int[],const int);
+
+//Problem 5 functions
+void istSort(int[],const int);//required by book
+void pb5Out(const int[],const int);
+
 //Begin Execution
 
 int main(int argc, char** argv) {
@@ -50,8 +58,8 @@ int main(int argc, char** argv) {
         cout << "1. Savitch, 8th Edition, Chapter 7, Problem 2\n";
         cout << "2. Savitch, 8th Edition, Chapter 7, Problem 3\n";
         cout << "3. Savitch, 8th Edition, Chapter 7, Problem 4\n";
-        cout << "4. \n";
-        cout << "5. \n";
+        cout << "4. Savitch, 8th Edition, Chapter 7, Problem 5\n";
+        cout << "5. Savitch, 8th Edition, Chapter 7, Problem 6\n";
         cout << "6. \n";
         cout << "7. \n";
         cout << "8. \n";
@@ -164,7 +172,59 @@ int main(int argc, char** argv) {
             case(4):
             {
                 //Short problem description
+                cout<<"Count how many integers are in an array and output it to the screen.\n\n";
                 //Begin problem 4
+                //Declare variables
+                const int MAX_SIZE = 50;//Maximum size of the array
+                int i_arr[MAX_SIZE];//Array for storing integers
+                int a_size;//Actual size of the array
+                char input_c;//Input choice of file or console supplied by the user
+                char f_name[MAX_SIZE];//File name for input
+                ifstream i_file;//File containing integers
+                
+                //Ask the user to read the input by console or by file
+                cout<<"Would you like to use the console or a file for input?\n";
+                cout<<"Format: [C for console, F for file]: ";
+                cin>>input_c;
+                cout<<endl;
+                
+                //Determine the users choice of input and act accordingly
+                if(input_c == 'c' || input_c == 'C'){
+                    //Read numbers from the console
+                    //Simple input validation
+                    do{
+                        cout<<"How many integers would you like to enter?\n";
+                        cout<<"Format: [n ("<<MAX_SIZE<<" or less)]: ";
+                        cin>>a_size;
+                    }while(a_size<0 || a_size>MAX_SIZE);
+                    cout<<"Please enter "<<a_size<<" integers\n";
+                    cout<<"Format: [n1 n2 n3...]: ";
+                    for(int i = 0;i<a_size;i++)
+                        cin>>i_arr[i];
+                }
+                else if(input_c == 'f' || input_c == 'F'){
+                    //Get the file name
+                    cout<<"Please enter the name of the file\n";
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cin.getline(f_name, MAX_SIZE);
+                    //Try to open the file
+                    i_file.open(f_name);
+                    //If the file can't be found, print and error and exit
+                    if(!i_file){
+                        cout<<"Couldn't find file "<<i_file<<endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    //Otherwise load up to MAX_SIZE integers from the file
+                    cout<<"Loading integers...";
+                    for(a_size = 0;a_size<MAX_SIZE&&i_file>>i_arr[a_size];a_size++);
+                }
+                
+                //Sort the array from highest to lowest
+                istSort(i_arr, a_size);//Defined in problem 5
+                
+                //Output the result
+                cout<<"    N    Count\n";
+                cRpeats(i_arr, a_size);
                 //End problem 4
                 cout << endl;
                 break;
@@ -172,7 +232,27 @@ int main(int argc, char** argv) {
             case(5):
             {
                 //Short problem description
+                cout<<"Demonstrate the use of an insertion sort program.\n\n";
                 //Begin problem 5
+                //Declare variables
+                const int MAX_SIZE = 20;//Maximum size of the array
+                int ex_arr[MAX_SIZE];//The example array being used
+                
+                //Fill the array with random numbers
+                for(int i = 0;i<MAX_SIZE;i++)
+                    ex_arr[i] = rand()%(MAX_SIZE+1);
+                
+                //Output the unsorted array
+                cout<<"Unsorted array\n";
+                pb5Out(ex_arr, MAX_SIZE);
+                
+                //Sort the array
+                istSort(ex_arr, MAX_SIZE);
+                
+                //Output the sorted array
+                cout<<"Sorted array\n";
+                pb5Out(ex_arr, MAX_SIZE);
+                
                 //End problem 5
                 cout << endl;
                 break;
@@ -452,4 +532,61 @@ double stdDev(double num_arr[], int size){
     
     //Divide the result by the number of elements, take the square root, and return
     return sqrt(result/size);
+}
+//Problem 4 functions
+
+//Insertion sort is found in the next problem!!
+
+//Count the number of repeated elements in a sorted list from highest to lowest
+//and output to the screen
+//No outputs
+//Inputs
+//  arr = array of integers
+//  size = size of the array
+void cRpeats(const int arr[],const int size){
+    //Declare variables
+    int c_num = arr[0];//The current element being examined (starts at the first element)
+    int count = 1;//current number of repeated elements including the original element
+    
+    for(int i = 1;i<size;i++){
+        if(c_num == arr[i])
+            count += 1;
+        else{
+            cout<<setw(5)<<c_num;
+            cout<<setw(5)<<count;
+            count = 1;
+            c_num = arr[i];
+        }
+    }
+    //Print the final element result
+    cout<<setw(5)<<c_num;
+    cout<<setw(5)<<count;
+}
+//Problem 5 functions
+
+//Sorts a list according to the insertion sort algorithm from highest to lowest
+//Outputs be reference
+//Inputs
+//  arr = array to be sorted
+//  size = size of the array
+//Outputs
+//  arr = array that is now sorted
+void istSort(int arr[],const int SIZE){
+    //Declare variables
+    int unst_i = 1;//the beginning of the unsorted portion of the array
+    int c_num;//current number being sorted
+    int swap;//used for swaps
+    
+    for(unst_i;unst_i<SIZE;unst_i++){
+        c_num = arr[unst_i];
+        
+        //Insert the next element in the unsorted list into the sorted section
+        for(int i = 0;i<=unst_i;i++){
+            if(c_num<arr[i]){
+                swap = arr[i];
+                arr[i] = c_num;
+                c_num = swap;
+            }
+        }
+    }
 }
