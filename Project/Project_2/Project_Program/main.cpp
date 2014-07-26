@@ -108,9 +108,11 @@ int main(int argc, char** argv) {
             case(3):{
                 cout<<"----------------------------Rules-for-Connect-Four--------------------------------\n";
                 cout<<"Players: 2\n\n";
-                cout<<"Objective: Players take turns trying to get four of their pieces lined up\n";
-                cout<<"           vertically, horizontally, or diagonally, while attempting\n";
-                cout<<"           to stop the other player from doing the same.\n\n";
+                cout<<"Description: Players take turns trying to get four of their pieces lined up\n";
+                cout<<"             vertically, horizontally, or diagonally, while attempting\n";
+                cout<<"             to stop the other player from doing the same.\n\n""
+                cout<<"Objective: Obtain a line of four of pieces vertically, horizontally, or\n";
+                cout<<"           or diagonally.\n\n"
                 cout<<"Constraints: Players may only choose which column they want their piece\n";
                 cout<<"             to fall. Once chosen, the piece falls to the lowest non-occupied\n";
                 cout<<"             space in the chosen column.\n\n";
