@@ -27,8 +27,9 @@ void update(char[][B_MAX],int,int,bool,int&);
 void endMsg(const char[][B_MAX],int,bool&);
 bool isDraw(const char[][B_MAX],int);
 bool didWin(const char[][B_MAX],int,int,int,int);
-int getMatch(const char[][B_MAX],int,int,int,int,int);
-void connectFour(int);
+int getMatch(const char[][B_MAX],int,int,int,char,int,int);
+int getValue(const char[][B_MAX],int,char,int,int);
+void connectFour(int,bool);
 //Begin Execution
 
 int main(int argc, char** argv) {
@@ -54,7 +55,7 @@ int main(int argc, char** argv) {
         
         switch(m_choice){
             case(1):{
-                connectFour(b_size);
+                connectFour(b_size,comp_opp);
                 break;
             }
             case(2):{
@@ -280,27 +281,11 @@ bool isDraw(const char board[][B_MAX],int size){
 bool didWin(const char board[][B_MAX],int size,int row,int col){
     //Declare variables
     const int MIN_M = 4;//The minimum number of matches for a win
+    char c_pce = board[row][col];//The current type of piece
     int matches = 1;//The number of matches in a line
-    enum dir{NONE = 0,UP = -1,DOWN = 1,LEFT = -1,RIGHT = 1};
     //Determine who won
     //We need only need to check if the currently placed piece creates a win
-    //Look for vertical matches
-    matches += getMatch(board,size,row,col,1,0);
-    if(matches >= MIN_M) return true;
-    else matches = 1;
-    //Look for horizontal matches
-    matches += getMatch(board,size,row,col,0,-1);
-    matches += getMatch(board,size,row,col,0,1);
-    if(matches >= MIN_M) return true;
-    else matches = 1;
-    //Look for diagonal matches from low to high (going left to right)
-    matches += getMatch(board,size,row,col,-1,1);
-    matches += getMatch(board,size,row,col,1,-1);
-    if(matches >= MIN_M) return true;
-    else matches = 1;
-    //Look for diagonal matches from high to low (going left to right)
-    matches += getMatch(board,size,row,col,-1,-1);
-    matches += getMatch(board,size,row,col,1,1);
+    matches += getValue(board,size,c_pce,row,col);
     if(matches >= MIN_M) return true;
     else return false;
 }
@@ -316,28 +301,96 @@ bool didWin(const char board[][B_MAX],int size,int row,int col){
 //  c_d = the direction the column index will move
 //Outputs
 //  matches = the number of matches in the given direction
-int getMatch(const char board[][B_MAX],int size,int r,int c,int r_d,int c_d){
+int getMatch(const char board[][B_MAX],int size,int r,int c,char c_pce,int r_d,int c_d){
     //Declare variables
     const int D_MAX = 3;//Maximum number of spaces away from the current piece that matter
     int matches = 0;//Number of matches so far to the current piece
-    char c_pce = board[r][c];//Current piece type
     
     //Check the matches in the given direction
     for(int i = 1;i<=D_MAX;i++){
         r += r_d;
         c += c_d;
-        if(inRange(r,size) && inRange(c,size+1) && board[r][c] == c_pce)
+        if(inRange(r,size,-1) && inRange(c,size+1,-1) && board[r][c] == c_pce)
             matches += 1;
         else
             break;
     }
     return matches;
 }
+
+//Examines the surrounding areas of a space on the board for unbroken lines of
+//a specific type of game piece.
+//Used to assign values for computer moves and determine if there is a winner
+//Inputs
+//  board = current board state
+//  size = size of the board
+//  pce = the type of piece to check for
+//  row = the row of the reference space
+//  col = the column of the reference space
+//Outputs
+//  highest = the highest value
+int getValue(const char board[][B_MAX],int size,char pce,int row,int col){
+    int val = 0;//The current value
+    int highest;//The highest value
+    enum dir{NONE = 0,UP = -1,DOWN = 1,LEFT = -1,RIGHT = 1};//Directions
+    
+    highest = getMatch(board,size,row,col,pce,DOWN,NONE);
+    //Look for horizontal matches
+    val += getMatch(board,size,row,col,pce,NONE,LEFT);
+    val += getMatch(board,size,row,col,pce,NONE,RIGHT);
+    if(val > highest) highest = val;
+    val = 0;
+    //Look for diagonal matches from low to high (going left to right)
+    val += getMatch(board,size,row,col,pce,UP,RIGHT);
+    val += getMatch(board,size,row,col,pce,DOWN,LEFT);
+    if(val > highest) highest = val;
+    val = 0;
+    //Look for diagonal matches from high to low (going left to right)
+    val += getMatch(board,size,row,col,pce,UP,LEFT);
+    val += getMatch(board,size,row,col,pce,DOWN,RIGHT);
+    if(val > highest) highest = val;
+    
+    return highest;
+}
+
+//Implementation of a basic computer opponent
+//The computer plays entirely defensively, assigning values to each open space
+//depending on how many pieces the human player has in a row surrounding that space
+//Inputs
+//  board = the current board position
+//  size = the size of the board
+//Outputs
+//  move = the chosen column by the computer
+int compMove(const char board[][B_MAX],int size){
+    //Declare variables
+    char plr = 'X';//The human player's piece
+    int c_val;//The value of the current space being examined
+    int h_val = 0;//The highest valued spot
+    int move = 0;//The computers chosen column
+    //Loop through every space
+    for(int i = 0;i<size;i++){
+        for(int j = 0;j<size+1;j++){
+            //If the space is empty, get the value of that space
+            //Otherwise move on to the next space
+            if(board[i][j] == '.'){
+                c_val = getValue(board,size,plr,i,j);
+                //If the current spaces value is greater than the highest value
+                //set the move to equal the current column and set the highest
+                //value to the current value
+                if(c_val > h_val){
+                    move = j;
+                    h_val = c_val;
+                }
+            }
+        }
+    }
+    return move;
+}
 //Implements the game Connect Four of variable board size
 //Inputs
 //  b_size = the size of the game board
 //No outputs
-void connectFour(int b_size){
+void connectFour(int b_size, bool c_opp){
     //Declare variables
     char board[b_size][B_MAX];//An nx(n+1) board
     int p_col;//The column the current player chose to drop a piece
@@ -347,21 +400,32 @@ void connectFour(int b_size){
     
     //Make the board "empty"
     empty(board,b_size);
+    
     //Start game loop
     do{
-        //Output the board
-        boardOut(board,b_size);
-        
-        //Input and validation loop
-        //The input isn't valid if it is out of the range of the boards
-        //columns, or if it is an illegal move
-        do{
-            cout<<"Player "<<static_cast<int>(plr)+1<<", enter your move: ";
-            p_col = getNum();
-        }while(!inRange(p_col,b_size+2) || !isLegal(board,p_col));
-        
-        //Update the board with the players move
-        update(board,b_size,p_col,plr,p_row);
+        //Determine if its the computers turn
+        if(c_opp && plr){
+            //Get the computers move
+            p_col = compMove(board,b_size)+1;
+            //Update the board
+            update(board,b_size,p_col,plr,p_row);
+        }
+        else{
+            //Output the board
+            boardOut(board,b_size);
+
+            //Input and validation loop
+            //The input isn't valid if it is out of the range of the boards
+            //columns, or if it is an illegal move
+            do{
+                cout<<"Player "<<static_cast<int>(plr)+1<<", enter your move: ";
+                p_col = getNum();
+            }while(!inRange(p_col,b_size+2) || !isLegal(board,p_col));
+            cout<<endl;
+            
+            //Update the board with the players move
+            update(board,b_size,p_col,plr,p_row);
+        }
         
         //Check for game ending conditions
         if(isDraw(board,b_size)){
@@ -372,7 +436,11 @@ void connectFour(int b_size){
         }
         else if(didWin(board,b_size,p_row-1,p_col-1)){
             //Output who won
-            cout<<"   Player "<<static_cast<int>(plr)+1<<" has won!\n\n";
+            if(c_opp && plr)
+                cout<<"   The computer won!\n\n";
+            else
+                cout<<"   Player "<<static_cast<int>(plr)+1<<" has won!\n\n";
+            
             //End the game
             endGame(board,b_size,running);
         }
