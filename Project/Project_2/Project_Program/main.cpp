@@ -14,10 +14,11 @@ using namespace std;
 //User Defined Libraries
 
 //Global Constants
-const int B_MAX = 10;//Maximum size for a board
+const int B_MAX = 10;//Maximum size for a board plus 1
 
 //Function Prototypes
 int getNum();
+void waitIpt();
 bool inRange(int,int,int=0);
 void empty(char[][B_MAX],int);
 void boardOut(const char[][B_MAX],int);
@@ -32,19 +33,24 @@ void connectFour(int);
 
 int main(int argc, char** argv) {
     //Main menu setup and output
-    int UB_MC = 3;//Upper bound for the menu choice 
+    const int B_MIN = 4;//Minimum board size minus 1
     int b_size = 6;//Size of the connect four game board (default is 6)
-    int m_choice;//The users menu choice
+    int m_choice;//The user's menu choice
+    int s_choice;//The user's settings choice
+    bool comp_opp = false;//Toggle for computer opponent
     //Enter menu loop
     do{
         //Output menu
+        cout<<"----------Menu-Menu----------\n";
         cout<<"1. Play Connect Four\n";
-        cout<<"2. Rules for Connect Four\n";
-        cout<<"3. Quit\n";
-        
+        cout<<"2. Settings Menu\n";
+        cout<<"3. Rules for Connect Four\n";
+        cout<<"4. Quit\n";
+        cout<<endl;
         //Get a number from the user
         cout<<"Enter your menu choice: ";
         m_choice = getNum();
+        cout<<endl;
         
         switch(m_choice){
             case(1):{
@@ -52,13 +58,71 @@ int main(int argc, char** argv) {
                 break;
             }
             case(2):{
-                cout<<"Rules for connect four\n";
+                do{
+                    //Output settings menu
+                    cout<<"-------------------Settings------------------\n";
+                    cout<<"1. Change board size [currently "<<b_size<<" by "<<b_size+1<<"]\n";
+                    cout<<"2. Toggle computer opponent [currently ";
+                    if(comp_opp) cout<<"on";
+                    else cout<<"off";
+                    cout<<"]\n";
+                    cout<<"3. Don't change settings\n\n";
+
+                    //Get users settings choice
+                    cout<<"Enter your settings choice: ";
+                    s_choice = getNum();
+                    cout<<endl;
+                    
+                    switch(s_choice){
+                        case(1):{
+                            cout<<"The board size is (N-1) by N, ";
+                            cout<<"where N is the number of columns.\n";
+                            cout<<"Enter the number of columns for the board";
+                            cout<<"("<<B_MIN<<" to "<<B_MAX<<"): ";
+                            b_size = getNum()-1;
+                            cout<<endl;
+                            if(inRange(b_size,B_MAX,B_MIN))
+                                cout<<"The board size is now "<<b_size<<" by "<<b_size+1<<endl<<endl;
+                            else{
+                                b_size = B_MIN+1;//Default board size
+                                cout<<"Invalid input, setting board size to ";
+                                cout<<b_size<<" by "<<b_size+1<<endl<<endl;
+                            }
+                            break;
+                        }
+                        case(2):{
+                            comp_opp = !comp_opp;
+                            cout<<"Computer opponent is now ";
+                            if(comp_opp) cout<<"on";
+                            else cout<<"off";
+                            cout<<endl<<endl;
+                            break;
+                        }
+                        default:
+                            cout<<"Exiting settings menu\n\n";
+                    }
+                }while(inRange(s_choice,3));
+                break;
+            }
+            case(3):{
+                cout<<"----------------------------Rules-for-Connect-Four--------------------------------\n";
+                cout<<"Players: 2\n\n";
+                cout<<"Objective: Players take turns trying to get four of their pieces lined up\n";
+                cout<<"           vertically, horizontally, or diagonally, while attempting\n";
+                cout<<"           to stop the other player from doing the same.\n\n";
+                cout<<"Constraints: Players may only choose which column they want their piece\n";
+                cout<<"             to fall. Once chosen, the piece falls to the lowest non-occupied\n";
+                cout<<"             space in the chosen column.\n\n";
+                cout<<"Ending conditions: 1. Either player gets four pieces in a row, and wins.\n";
+                cout<<"                   2. There are no more places to play, and the game is a draw.\n\n";
+                waitIpt();
+                cout<<endl;
                 break;
             }
             default:
                 cout<<"Exiting game.\n";
         }
-    }while(inRange(m_choice,UB_MC));//Check to see if the input is in a range
+    }while(inRange(m_choice,4));//Check to see if the input is in a range
 
     //Exit program
     return 0;
@@ -76,8 +140,17 @@ int getNum(){
     //Clear the input buffer
     cin.clear();//Remove the error flag on bad input
     cin.ignore(numeric_limits<streamsize>::max(), '\n');//Skip to the next newline character
-    cout<<endl;
     return choice;
+}
+
+//Waits for user input before continuing
+//No Inputs
+//No Outputs
+void waitIpt(){
+    cout<<"Press Enter to continue ";
+    cin;
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');//Ignore all input
 }
 
 //Determines whether input is inside a range exclusive of the bounds
@@ -170,12 +243,11 @@ void update(char board[][B_MAX],int size,int MOVE,bool plr,int& row){
 //  running = flag determining whether the game should keep running
 void endGame(const char board[][B_MAX],int size,bool& running){
     //Output the final position
+    cout<<"     Ending position\n";
+    cout<<"-------------------------\n";
     boardOut(board,size);
     //Wait for the user to continue
-    cout<<"Press Enter to continue ";
-    cin;
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');//Ignore all input
+    waitIpt();
     cout<<endl;
     //Set the status of the game to not be running
     running = false;
@@ -270,7 +342,7 @@ void connectFour(int b_size){
     char board[b_size][B_MAX];//An nx(n+1) board
     int p_col;//The column the current player chose to drop a piece
     int p_row;//The row where the current players move landed
-    bool plr = true;//Flag determining which player is currently playing
+    bool plr = false;//Flag determining which player is currently playing
     bool running = true;//Flag determining if the game is over or not
     
     //Make the board "empty"
@@ -284,7 +356,7 @@ void connectFour(int b_size){
         //The input isn't valid if it is out of the range of the boards
         //columns, or if it is an illegal move
         do{
-            cout<<"Enter the number of the column you would like to drop your piece: ";
+            cout<<"Player "<<static_cast<int>(plr)+1<<", enter your move: ";
             p_col = getNum();
         }while(!inRange(p_col,b_size+2) || !isLegal(board,p_col));
         
@@ -294,13 +366,13 @@ void connectFour(int b_size){
         //Check for game ending conditions
         if(isDraw(board,b_size)){
             //Output a draw message
-            cout<<"The game is a draw!\n\n";
+            cout<<"   The game is a draw!\n\n";
             //End the game
             endGame(board,b_size,running);
         }
         else if(didWin(board,b_size,p_row-1,p_col-1)){
             //Output who won
-            cout<<"Player "<<static_cast<int>(plr)+1<<" has won!\n\n";
+            cout<<"   Player "<<static_cast<int>(plr)+1<<" has won!\n\n";
             //End the game
             endGame(board,b_size,running);
         }
