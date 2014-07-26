@@ -14,26 +14,27 @@ using namespace std;
 //User Defined Libraries
 
 //Global Constants
-const short B_MAX = 10;//Maximum size for a board
+const int B_MAX = 10;//Maximum size for a board
 
 //Function Prototypes
-short getNum();
-bool inRange(short,short,short=0);
-void empty(char[][B_MAX],short);
-void boardOut(const char[][B_MAX],short);
-bool isLegal(const char[][B_MAX],short);
-void update(char[][B_MAX],short,short,bool,short&);
-void endMsg(const char[][B_MAX],short,bool&);
-bool isDraw(const char[][B_MAX],short);
-bool didWin(const char[][B_MAX],short,short,short,short);
-void connectFour(short);
+int getNum();
+bool inRange(int,int,int=0);
+void empty(char[][B_MAX],int);
+void boardOut(const char[][B_MAX],int);
+bool isLegal(const char[][B_MAX],int);
+void update(char[][B_MAX],int,int,bool,int&);
+void endMsg(const char[][B_MAX],int,bool&);
+bool isDraw(const char[][B_MAX],int);
+bool didWin(const char[][B_MAX],int,int,int,int);
+int getMatch(const char[][B_MAX],int,int,int,int,int);
+void connectFour(int);
 //Begin Execution
 
 int main(int argc, char** argv) {
     //Main menu setup and output
-    short UB_MC = 3;//Upper bound for the menu choice 
-    short b_size = 6;//Size of the connect four game board (default is 6)
-    short m_choice;//The users menu choice
+    int UB_MC = 3;//Upper bound for the menu choice 
+    int b_size = 6;//Size of the connect four game board (default is 6)
+    int m_choice;//The users menu choice
     //Enter menu loop
     do{
         //Output menu
@@ -47,7 +48,6 @@ int main(int argc, char** argv) {
         
         switch(m_choice){
             case(1):{
-                cout<<"Connect four game\n";
                 connectFour(b_size);
                 break;
             }
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
             default:
                 cout<<"Exiting game.\n";
         }
-    }while(!inRange(m_choice,UB_MC));//Check to see if the input is in a range
+    }while(inRange(m_choice,UB_MC));//Check to see if the input is in a range
 
     //Exit program
     return 0;
@@ -69,9 +69,9 @@ int main(int argc, char** argv) {
 //No inputs
 //Outputs
 //  choice = the users choice
-short getNum(){
+int getNum(){
     //Get the choice
-    short choice;
+    int choice;
     cin>>choice;
     //Clear the input buffer
     cin.clear();//Remove the error flag on bad input
@@ -87,7 +87,7 @@ short getNum(){
 //  UB = upper bound on the input
 //Outputs
 //  bool determining if the input is valid or not
-bool inRange(short ipt,short ub,short lb){
+bool inRange(int ipt,int ub,int lb){
     //The input is in the range if it is between the upper and lower bounds
     return ipt>lb && ipt<ub;
 }
@@ -98,7 +98,7 @@ bool inRange(short ipt,short ub,short lb){
 //  size = number of rows and number of columns-1
 //Outputs
 //  arr = a 2-dimensional array filled with '.' characters
-void empty(char arr[][B_MAX],short size){
+void empty(char arr[][B_MAX],int size){
     for(int i = 0;i<size;i++){
         for(int j = 0;j<size+1;j++)
             arr[i][j] = '.';
@@ -110,7 +110,7 @@ void empty(char arr[][B_MAX],short size){
 //  board = the current board
 //  size = the size of the board
 //No outputs
-void boardOut(const char board[][B_MAX],short size){
+void boardOut(const char board[][B_MAX],int size){
     //Output numbers above each column on the board
     cout<<"    ";
     for(int i = 0;i<size+1;i++)
@@ -134,7 +134,7 @@ void boardOut(const char board[][B_MAX],short size){
 //  p_move = the players move
 //Output
 //  bool indicating if the move is legal
-bool isLegal(const char board[][B_MAX],short p_move){
+bool isLegal(const char board[][B_MAX],int p_move){
     return(board[0][p_move-1] == '.');
 }
 
@@ -147,9 +147,9 @@ bool isLegal(const char board[][B_MAX],short p_move){
 //Outputs
 //  board = the board updated with the current players move
 //  row = the row where the piece landed
-void update(char board[][B_MAX],short size,short MOVE,bool plr,short& row){
+void update(char board[][B_MAX],int size,int MOVE,bool plr,int& row){
     char crd;//The current coordinate being examined
-    for(short i = size-1;i>=0;i--){
+    for(int i = size-1;i>=0;i--){
         crd = board[i][MOVE-1];
         if(crd == '.'){
             if(plr) crd = 'O';
@@ -168,12 +168,13 @@ void update(char board[][B_MAX],short size,short MOVE,bool plr,short& row){
 //  size = size of the board
 //Outputs (by reference)
 //  running = flag determining whether the game should keep running
-void endGame(const char board[][B_MAX],short size,bool& running){
+void endGame(const char board[][B_MAX],int size,bool& running){
     //Output the final position
     boardOut(board,size);
     //Wait for the user to continue
-    cout<<"Enter anything to continue ";
+    cout<<"Press Enter to continue ";
     cin;
+    cin.clear();
     cin.ignore(numeric_limits<streamsize>::max(), '\n');//Ignore all input
     cout<<endl;
     //Set the status of the game to not be running
@@ -187,7 +188,7 @@ void endGame(const char board[][B_MAX],short size,bool& running){
 //  size = size of the game board
 //Output
 //  flag determining if the game is a draw
-bool isDraw(const char board[][B_MAX],short size){
+bool isDraw(const char board[][B_MAX],int size){
     for(int i = 0;i<size+1;i++){
         if(board[0][i] == '.')
             return false;
@@ -204,28 +205,71 @@ bool isDraw(const char board[][B_MAX],short size){
 //  PLR = the current player
 //Outputs
 //  bool determining if the current player has won
-bool didWin(const char board[][B_MAX],short size,short row,short col){
+bool didWin(const char board[][B_MAX],int size,int row,int col){
     //Declare variables
-    const short S_MAX = 3;//The maximum number of spaces away from the current move that matters
-    char p_pce = board[row][col];//The current players type of piece
-    short v_mch,h_mch,d1_mch,d2_mch;//The number of matches vertically, horizontally, and diagonally
-    v_mch = h_mch = d1_mch = d2_mch = 1;//Set the current matches to 1
-    
+    const int MIN_M = 4;//The minimum number of matches for a win
+    int matches = 1;//The number of matches in a line
+    enum dir{NONE = 0,UP = -1,DOWN = 1,LEFT = -1,RIGHT = 1};
     //Determine who won
-    //We need only look at the areas surrounding the currently placed piece
-    }
+    //We need only need to check if the currently placed piece creates a win
+    //Look for vertical matches
+    matches += getMatch(board,size,row,col,1,0);
+    if(matches >= MIN_M) return true;
+    else matches = 1;
+    //Look for horizontal matches
+    matches += getMatch(board,size,row,col,0,-1);
+    matches += getMatch(board,size,row,col,0,1);
+    if(matches >= MIN_M) return true;
+    else matches = 1;
+    //Look for diagonal matches from low to high (going left to right)
+    matches += getMatch(board,size,row,col,-1,1);
+    matches += getMatch(board,size,row,col,1,-1);
+    if(matches >= MIN_M) return true;
+    else matches = 1;
+    //Look for diagonal matches from high to low (going left to right)
+    matches += getMatch(board,size,row,col,-1,-1);
+    matches += getMatch(board,size,row,col,1,1);
+    if(matches >= MIN_M) return true;
+    else return false;
 }
 
-//Try to match
+//Give the number of repeated matches of the current piece from a given location
+//up to 3 spaces away in a given direction
+//Inputs
+//  board = the current board state
+//  size = the board size
+//  r = the row index of the current piece
+//  c = the column index of the current piece
+//  r_d = the direction the row index will move
+//  c_d = the direction the column index will move
+//Outputs
+//  matches = the number of matches in the given direction
+int getMatch(const char board[][B_MAX],int size,int r,int c,int r_d,int c_d){
+    //Declare variables
+    const int D_MAX = 3;//Maximum number of spaces away from the current piece that matter
+    int matches = 0;//Number of matches so far to the current piece
+    char c_pce = board[r][c];//Current piece type
+    
+    //Check the matches in the given direction
+    for(int i = 1;i<=D_MAX;i++){
+        r += r_d;
+        c += c_d;
+        if(inRange(r,size) && inRange(c,size+1) && board[r][c] == c_pce)
+            matches += 1;
+        else
+            break;
+    }
+    return matches;
+}
 //Implements the game Connect Four of variable board size
 //Inputs
 //  b_size = the size of the game board
 //No outputs
-void connectFour(short b_size){
+void connectFour(int b_size){
     //Declare variables
     char board[b_size][B_MAX];//An nx(n+1) board
-    short p_col;//The column the current player chose to drop a piece
-    short p_row;//The row where the current players move landed
+    int p_col;//The column the current player chose to drop a piece
+    int p_row;//The row where the current players move landed
     bool plr = true;//Flag determining which player is currently playing
     bool running = true;//Flag determining if the game is over or not
     
@@ -256,12 +300,12 @@ void connectFour(short b_size){
         }
         else if(didWin(board,b_size,p_row-1,p_col-1)){
             //Output who won
-            cout<<"Player "<<static_cast<short>(plr)+1<<" has won!\n\n";
+            cout<<"Player "<<static_cast<int>(plr)+1<<" has won!\n\n";
             //End the game
             endGame(board,b_size,running);
         }
         else
             //If the game isn't over, change the player
             plr = !plr;
-    }while(running);   
+    }while(running);
 }
