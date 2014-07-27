@@ -8,6 +8,8 @@
 
 //System Level Libraries 
 #include <iostream>
+#include <iomanip>
+#include <cstdlib>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -21,11 +23,15 @@ const int B_MAX = 10;//Maximum size for a board plus 1
 
 //Function Prototypes
 int linSrch(string,const vector<string>&);
+void sort(int[],int);
 bool isYes();
 int getNum();
 void waitIpt();
 bool inRange(int,int,int=0);
 void empty(char[][B_MAX],int);
+void statOut(const vector<string>&,const vector<int>&,int);
+void rankOut(const vector<string>&,const vector<int>&);
+void catgryOut(const vector<string>&,const int[],int,string);
 void acctOut(const vector<string>&,int);
 void boardOut(const char[][B_MAX],int);
 bool isLegal(const char[][B_MAX],int);
@@ -35,58 +41,66 @@ bool isDraw(const char[][B_MAX],int);
 bool didWin(const char[][B_MAX],int,int,int,int);
 int getMatch(const char[][B_MAX],int,int,int,char,int,int);
 int getValue(const char[][B_MAX],int,char,int,int);
-void connectFour(int,bool);
+void connectFour(int,const vector<string>&,vector<int>&,int,int);
 //Begin Execution
 
 int main(int argc, char** argv) {
     //Main menu setup and output
     const int B_MIN = 4;//Minimum board size minus 1
+    const int COMP_ID = 0;//Computer accounts ID
+    const int GUEST_ID = -1;//Guest ID
+    const int S_NUM = 3;//The number of statistics kept per player
+    const int DEF_SIZE = 6;//The default board size
     string acct_name;//User's account name choice
     int acct_len;//Length of the users account name
     int b_size = 6;//Size of the connect four game board (default is 6)
     int m_choice;//User's menu choice
-    int s_choice;//User's settings choice
+    int s_choice;//User's settings and statistics choice
     int p_choice;//User's player choice
-    bool comp_opp = false;//Toggle for computer opponent
     vector<string> plrs;//A list of registered players
     vector<int> stats;//A list of statistics for each player
-    int p1_id = -1;//Identification number for player one (default loaded at startup)
-    int p2_id = -1;//Identification number for player two (default loaded at startup)
+    int p1_id = GUEST_ID;//ID for player one (default loaded at startup)
+    int p2_id = GUEST_ID;//ID for player two (default loaded at startup)
     fstream plr_file;//Stream for the player file
     fstream stat_file;//Stream for the statistics file
     
     //Try to load registered players
     plr_file.open("players.csv");
-    if(!plr_file.is_open())
-        cout<<"Error, \"players.csv\" not found. No Statistics will be available.\n";
+    if(!plr_file.is_open()){
+        cout<<"Fatal Error: \"players.csv\" not found.\n";
+        exit(EXIT_FAILURE);
+    }
     else{
         string load;//Dummy variable for loading
         while(plr_file>>load)
             plrs.push_back(load);
-        plr_file.clear();
+        plr_file.close();
     }
     
     //Try to load statistics for registered players
     stat_file.open("stats.csv");
-    if(!stat_file.is_open())
-        cout<<"Error, \"stats.csv\" not found.\n";
+    if(!stat_file.is_open()){
+        cout<<"Fatal Error: \"stats.csv\" not found.\n";
+        exit(EXIT_FAILURE);
+    }
     else{
         int load;//Dummy variable for loading
         while(stat_file>>load){
             stats.push_back(load);
         }
-        stat_file.clear();
+        stat_file.close();
     }
-    
+ 
     //Enter menu loop
     do{
         //Output menu
         cout<<"----------Menu-Menu----------\n";
         cout<<"1. Play Connect Four\n";
-        cout<<"2. Change account\n";
-        cout<<"3. Settings Menu\n";
-        cout<<"4. Rules for Connect Four\n";
-        cout<<"5. Quit\n";
+        cout<<"2. Rules for Connect Four\n";
+        cout<<"3. Change account\n";
+        cout<<"4. Settings Menu\n";
+        cout<<"5. Statistics Menu\n";
+        cout<<"6. Quit\n";
         cout<<endl;
         //Get a number from the user
         cout<<"Enter your menu choice: ";
@@ -95,17 +109,34 @@ int main(int argc, char** argv) {
         
         switch(m_choice){
             case(1):{
-                connectFour(b_size,comp_opp);
+                connectFour(b_size,plrs,stats,p1_id,p2_id);
                 break;
             }
             case(2):{
+                cout<<"----------------------------Rules-for-Connect-Four--------------------------------\n";
+                cout<<"Players: 2\n";
+                cout<<"Description: Players take turns trying to get four of their pieces lined up\n";
+                cout<<"             vertically, horizontally, or diagonally, while attempting\n";
+                cout<<"             to stop the other player from doing the same.\n";
+                cout<<"Objective: Obtain a line of four of pieces vertically, horizontally, or\n";
+                cout<<"           or diagonally.\n";
+                cout<<"Constraints: Players may only choose which column they want their piece\n";
+                cout<<"             to fall. Once chosen, the piece falls to the lowest non-occupied\n";
+                cout<<"             space in the chosen column.\n";
+                cout<<"Ending conditions: 1. Either player gets four pieces in a row, and wins.\n";
+                cout<<"                   2. There are no more places to play, and the game is a draw.\n\n";
+                waitIpt();
+                cout<<endl;
+                break;
+            }
+            case(3):{
                 cout<<"Player 1's current account: ";
                 acctOut(plrs,p1_id);
                 cout<<endl;
                 cout<<"Player 2's current account: ";
                 acctOut(plrs,p2_id);
                 cout<<endl;
-                cout<<"Change which player's account?(1 or 2):";
+                cout<<"Change which player's account?(1 or 2): ";
                 p_choice = getNum();
                 if(p_choice == 1 || p_choice == 2){
                     do{
@@ -114,26 +145,29 @@ int main(int argc, char** argv) {
                     acct_len = acct_name.length();
                     }while(acct_len<=0 || acct_len>10);
                     //See if the given account name exists already
+                    
                     int id = linSrch(acct_name,plrs);//Dummy variable for id number
-                    //If the name isn't found, ask to register the account
-                    if(id<0){
+                    
+                    //If the name isn't found, check to see if the account name is guest
+                    //Otherwise ask if the user wishes to register the account
+                    if(id<0 && !(acct_name == "Guest" || acct_name == "guest")){
                         cout<<"Account name not found, register new account?: ";
                         if(isYes()){
-                            cout<<acct_name;
-                            cout<<"!@#$"<<endl;
                             id = plrs.size();
                             plrs.push_back(acct_name);
-                            plr_file<<acct_name<<endl;
                             stats.push_back(id);
+                            for(int i = 0;i<S_NUM;i++){
                             stats.push_back(0);
-                            stats.push_back(0);
-                            stat_file<<id<<endl<<0<<endl<<0<<endl;
+                            }
                             cout<<"Account registered\n\n";
                         }
                         else cout<<"Setting to default account\n\n";
                     }
-                    else cout<<"Welcome back "<<acct_name<<"!\n\n";
-                    
+                    else if(id == 0) {
+                        cout<<"Computer opponent is on\n\n";
+                        p_choice = 2;
+                    }
+                    else cout<<"Setting Player "<<p_choice<<" account to "<<acct_name<<"\n\n";
                     if(p_choice == 1) p1_id = id;
                     else p2_id = id;
                 }
@@ -141,17 +175,17 @@ int main(int argc, char** argv) {
                     cout<<"Invalid input\n\n";
                 break;
             }
-            case(3):{
+            
+            case(4):{
                 do{
                     //Output settings menu
-                    cout<<"-------------------Settings------------------\n";
+                    cout<<"------------------Settings-Menu-----------------\n";
                     cout<<"1. Change board size [currently "<<b_size<<" by "<<b_size+1<<"]\n";
                     cout<<"2. Toggle computer opponent [currently ";
-                    if(comp_opp) cout<<"on";
+                    if(p2_id == 0) cout<<"on";
                     else cout<<"off";
                     cout<<"]\n";
-                    cout<<"3. Change player account\n";
-                    cout<<"4. Don't change settings\n\n";
+                    cout<<"3. Exit Settings Menu\n\n";
 
                     //Get users settings choice
                     cout<<"Enter your settings choice: ";
@@ -163,56 +197,101 @@ int main(int argc, char** argv) {
                             cout<<"The board size is (N-1) by N, ";
                             cout<<"where N is the number of columns.\n";
                             cout<<"Enter the number of columns for the board";
-                            cout<<"("<<B_MIN<<" to "<<B_MAX<<"): ";
+                            cout<<"("<<DEF_SIZE<<" to "<<B_MAX-1<<"): ";
                             b_size = getNum()-1;
                             cout<<endl;
-                            if(inRange(b_size,B_MAX,B_MIN))
+                            if(inRange(b_size,B_MAX-1,B_MIN))
                                 cout<<"The board size is now "<<b_size<<" by "<<b_size+1<<endl<<endl;
                             else{
-                                b_size = B_MIN+1;//Default board size
+                                b_size = DEF_SIZE;//Default board size
                                 cout<<"Invalid input, setting board size to ";
                                 cout<<b_size<<" by "<<b_size+1<<endl<<endl;
                             }
                             break;
                         }
                         case(2):{
-                            comp_opp = !comp_opp;
                             cout<<"Computer opponent is now ";
-                            if(comp_opp) cout<<"on";
-                            else cout<<"off";
+                            if(p2_id != COMP_ID){
+                                cout<<"on";
+                                p2_id = COMP_ID;
+                            }
+                            else {
+                                cout<<"off";
+                                p2_id = GUEST_ID;
+                            }
                             cout<<endl<<endl;
                             break;
                         }
                         default:
-                            cout<<"Exiting settings menu\n\n";
+                            cout<<endl<<endl;
                     }
                 }while(inRange(s_choice,3));
                 break;
             }
-            case(4):{
-                cout<<"----------------------------Rules-for-Connect-Four--------------------------------\n";
-                cout<<"Players: 2\n\n";
-                cout<<"Description: Players take turns trying to get four of their pieces lined up\n";
-                cout<<"             vertically, horizontally, or diagonally, while attempting\n";
-                cout<<"             to stop the other player from doing the same.\n\n";
-                cout<<"Objective: Obtain a line of four of pieces vertically, horizontally, or\n";
-                cout<<"           or diagonally.\n\n";
-                cout<<"Constraints: Players may only choose which column they want their piece\n";
-                cout<<"             to fall. Once chosen, the piece falls to the lowest non-occupied\n";
-                cout<<"             space in the chosen column.\n\n";
-                cout<<"Ending conditions: 1. Either player gets four pieces in a row, and wins.\n";
-                cout<<"                   2. There are no more places to play, and the game is a draw.\n\n";
-                waitIpt();
-                cout<<endl;
+            
+            case(5):{
+                do{
+                    //Output statistics menu
+                    cout<<"-----Statistics-Menu-----\n";
+                    cout<<"1. Player 1 Statistics\n";
+                    cout<<"2. Player 2 Statistics\n";
+                    cout<<"3. Computer Statistics\n";
+                    cout<<"4. Overall Rankings\n";
+                    cout<<"5. Exit Statistics Menu\n\n";
+
+                    //Get users choice
+                    cout<<"Enter your statistics choice: ";
+                    s_choice = getNum();
+                    cout<<endl;
+                    
+                    //Determine what to do based on the user's choice
+                    switch(s_choice){
+                        case(1):{
+                            //Output player 1's statistics unless it is a guest player
+                            if(p1_id>=0) statOut(plrs,stats,p1_id);
+                            else cout<<"Guest players have no statistics";
+                            cout<<endl;
+                            break;
+                        }
+                        case(2):{
+                            //Output player 2's statistics unless it is a guest player
+                            if(p2_id>=0) statOut(plrs,stats,p2_id);
+                            else cout<<"Guest players have no statistics";
+                            cout<<endl;
+                            break;
+                        }
+                        case(3):{
+                            //Output the computer's statistics
+                            statOut(plrs,stats,COMP_ID);
+                            cout<<endl;
+                            break;
+                        }
+                        case(4):{
+                            //Output the overall rankings
+                            rankOut(plrs,stats);
+                            cout<<endl;
+                            break;
+                        }
+                        default:
+                            cout<<endl<<endl;   
+                    }
+                }while(inRange(s_choice,5));
                 break;
             }
             default:
                 cout<<"Exiting game.\n";
         }
-    }while(inRange(m_choice,5));//Check to see if the input is in a range
+    }while(inRange(m_choice,6));//Check to see if the input is in a range
     
-    //Close files
+    //Write to files
+    plr_file.open("players.csv",ios::out|ios::trunc);
+    for(int i = 0;i<plrs.size();i++)
+        plr_file<<plrs[i]<<endl;
     plr_file.close();
+    
+    stat_file.open("stats.csv",ios::out|ios::trunc);
+    for(int i = 0;i<stats.size();i++)
+        stat_file<<stats[i]<<endl;
     stat_file.close();
     
     //Exit program
@@ -232,7 +311,40 @@ int linSrch(string item,const vector<string>& list){
         if(item == list[i])
             return i;
     }
-    return -1;
+    return -1;//Guest ID is -1
+}
+
+//A special implementation of selection sort that sorts the first partition of the
+//array, and corresponds the second partition to the first. (sort is from high to low)
+//Example: Input array is [1,2,4,3] and the size is given as 2. Once sorted the array
+//         will be [2,1,3,4] because there is an assumed relationship between
+//         the first and second partitions (2 corresponds to 3, 1 to 4).
+//Inputs
+//  array = the partitioned array
+//  size = the partition size
+//Output (by reference)
+//  array = the sorted array
+void sort(int array[],int size){
+    //Declare variables
+    int max_i;//The index with the maximum value and ID
+    int max_v;//The maximum value
+    int max_id;//ID corresponding to the maximum value
+    for(int start = 0;start<(size-1);start++){
+        max_i = start;
+        max_v = array[start];
+        max_id = array[start+size];
+        for(int i = start+1;i<size;i++){
+            if(array[i]>max_v){
+                max_v = array[i];
+                max_id = array[i+size];
+                max_i = i;
+            }
+        }       
+        array[max_i] = array[start];
+        array[max_i+size] = array[start+size];
+        array[start] = max_v;
+        array[start+size] = max_id;
+    }
 }
 
 //Determine if the user entered y or Y for yes
@@ -307,6 +419,89 @@ void acctOut(const vector<string>& plrs,int id){
     else cout<<plrs[id];
 }
 
+//Outputs the statistics of a specific player
+//Inputs
+//  plrs = the list of players
+//  stats = the list of statistics
+//  id = the id number of the player to lookup
+//No Outputs
+void statOut(const vector<string>& plrs, const vector<int>& stats, int id){
+    cout<<plrs[id]<<"'s Statistics\n";
+    cout<<"-------------------------\n";
+    cout<<"Games Won:   "<<setw(4)<<stats[(id*4)+1]<<endl;
+    cout<<"Games Lost:  "<<setw(4)<<stats[(id*4)+2]<<endl;
+    cout<<"Games Drawn: "<<setw(4)<<stats[(id*4)+3]<<endl;
+}
+
+void rankOut(const vector<string>& plrs,const vector<int>& stats){
+    //Declare variables
+    const int SIZE = plrs.size();//Size of a specific category
+    const int MAX_DIS = 10;
+    const int CATEGORIES = 3;//The number of categories
+    int top;//The number of players displayed, either 10 or SIZE, whichever is smaller
+    //For the following arrays, the first "section" of size SIZE has will have a
+    //sorted list for a specific category of statistics (wins, losses, draws).
+    //the second section, also of size SIZE, has the corresponding ids.
+    int wins[SIZE*2];
+    int loss[SIZE*2];
+    int draw[SIZE*2];
+    
+    //Load ids and categories into the arrays
+    for(int i = 0;i<SIZE;i++){
+        wins[i] = stats[i*4+1];
+        wins[i+SIZE] = stats[i*4];
+        loss[i] = stats[i*4+2];
+        loss[i+SIZE] = stats[i*4];
+        draw[i] = stats[i*4+3];
+        draw[i+SIZE] = stats[i*4];
+    }
+    
+    //Sort each array
+    sort(wins,SIZE);
+    sort(loss,SIZE);
+    sort(draw,SIZE);
+    
+    for(int i = 0;i<SIZE;i++){
+        cout<<"wins "<<wins[i]<<endl;
+        cout<<"id "<<wins[i+SIZE]<<endl;
+        cout<<"loss "<<loss[i]<<endl;
+        cout<<"id "<<loss[i+SIZE]<<endl;
+        cout<<"draw "<<draw[i]<<endl;
+        cout<<"id "<<draw[i+SIZE]<<endl;
+    }
+    //Determine how many players to print
+    if(SIZE<MAX_DIS) top = SIZE;
+    else top = MAX_DIS;
+    //Print to the screen
+    cout<<"---------Rankings----------\n";
+    for(int i = 0;i<CATEGORIES;i++){
+        (i == 0)?catgryOut(plrs,wins,SIZE,"Wins"):
+        (i == 1)?catgryOut(plrs,loss,SIZE,"Losses"):
+                 catgryOut(plrs,draw,SIZE,"Draws");
+    }
+}
+void catgryOut(const vector<string>& plrs,const int c_arr[],int size,string cat){
+    const int MAX_DIS = 10;
+    const int MAX_SPC = 11;
+    int top;
+    if(size<MAX_DIS) top = size;
+    else top = MAX_DIS;
+    int s_num;
+    string plr;
+    
+    cout<<"Most "<<cat<<endl;
+    cout<<"-------------------\n";
+    for(int i = 0;i<top;i++){
+        plr = plrs[c_arr[size+i]];
+        s_num = MAX_SPC-plr.length();
+        cout<<i<<". "<<plr<<" with ";
+        for(int j = 0;j<s_num;j++) cout<<" ";
+        cout<<setw(4)<<c_arr[i]<<" "<<cat<<endl;
+    }
+    cout<<endl;
+    waitIpt();
+    cout<<endl;
+}
 //Print the board to the screen
 //Inputs
 //  board = the current board
@@ -518,11 +713,13 @@ int compMove(const char board[][B_MAX],int size){
 //Inputs
 //  b_size = the size of the game board
 //No outputs
-void connectFour(int b_size, bool c_opp){
+void connectFour(int b_size,const vector<string>& plrs,vector<int>& stats,int p1_id,int p2_id){
     //Declare variables
+    enum s_loc{WIN = 1,LOSS = 2,DRAW = 3};//For accessing player statistics
     char board[b_size][B_MAX];//An nx(n+1) board
     int p_col;//The column the current player chose to drop a piece
     int p_row;//The row where the current players move landed
+    int id = p1_id;//The id of the current player
     bool plr = false;//Flag determining which player is currently playing
     bool running = true;//Flag determining if the game is over or not
     
@@ -532,7 +729,7 @@ void connectFour(int b_size, bool c_opp){
     //Start game loop
     do{
         //Determine if its the computers turn
-        if(c_opp && plr)
+        if(p2_id == 0 && plr)//0 is the computers ID
             //Get the computers move
             p_col = compMove(board,b_size)+1;
         else{
@@ -543,7 +740,9 @@ void connectFour(int b_size, bool c_opp){
             //The input isn't valid if it is out of the range of the boards
             //columns, or if it is an illegal move
             do{
-                cout<<"Player "<<static_cast<int>(plr)+1<<", enter your move: ";
+                if(id<0) cout<<"Player "<<static_cast<int>(plr)+1;
+                else cout<<plrs[id];
+                cout<<", enter your move: ";
                 p_col = getNum();
             }while(!inRange(p_col,b_size+2) || !isLegal(board,p_col));
             cout<<endl;
@@ -556,21 +755,36 @@ void connectFour(int b_size, bool c_opp){
         if(isDraw(board,b_size)){
             //Output a draw message
             cout<<"   The game is a draw!\n\n";
+            
+            //Update statistics
+            if(p1_id >= 0) stats[(p1_id*4)+DRAW]+=1;
+            if(p2_id >= 0) stats[(p2_id*4)+DRAW]+=1;
+            
             //End the game
             endGame(board,b_size,running);
         }
         else if(didWin(board,b_size,p_row-1,p_col-1)){
             //Output who won
-            if(c_opp && plr)
-                cout<<"   The computer won!\n\n";
-            else
-                cout<<"   Player "<<static_cast<int>(plr)+1<<" has won!\n\n";
+            if(p2_id == 0 && plr) cout<<"The computer";
+            else{
+                if(id<0) cout<<"Player "<<static_cast<int>(plr)+1;
+                else cout<<plrs[id];
+            }
+            cout<<" has won!\n\n";
+            
+            //Update statistics
+            if(id >= 0) stats[(id*4)+WIN]+=1;
+            if(!plr && p2_id >= 0) stats[(p2_id*4)+LOSS]+=1;
+            if(plr && p1_id >= 0) stats[(p1_id*4)+LOSS]+=1;
             
             //End the game
             endGame(board,b_size,running);
         }
-        else
+        else{
             //If the game isn't over, change the player
             plr = !plr;
+            if(plr) id = p2_id;
+            else id = p1_id;
+        }
     }while(running);
 }
