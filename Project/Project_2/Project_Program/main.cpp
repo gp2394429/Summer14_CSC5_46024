@@ -433,20 +433,23 @@ void statOut(const vector<string>& plrs, const vector<int>& stats, int id){
     cout<<"Games Drawn: "<<setw(4)<<stats[(id*4)+3]<<endl;
 }
 
+//Prints the users with the most wins, losses, and draws to the screen
+//Inputs
+//  plrs = the list of players
+//  stats = statistics for the players
+//No Output
 void rankOut(const vector<string>& plrs,const vector<int>& stats){
     //Declare variables
     const int SIZE = plrs.size();//Size of a specific category
-    const int MAX_DIS = 10;
     const int CATEGORIES = 3;//The number of categories
-    int top;//The number of players displayed, either 10 or SIZE, whichever is smaller
-    //For the following arrays, the first "section" of size SIZE has will have a
+    //For the following arrays, the first partition of size SIZE has will have a
     //sorted list for a specific category of statistics (wins, losses, draws).
-    //the second section, also of size SIZE, has the corresponding ids.
+    //the second partition, also of size SIZE, has the corresponding IDs.
     int wins[SIZE*2];
     int loss[SIZE*2];
     int draw[SIZE*2];
     
-    //Load ids and categories into the arrays
+    //Load IDs and categories into the arrays
     for(int i = 0;i<SIZE;i++){
         wins[i] = stats[i*4+1];
         wins[i+SIZE] = stats[i*4];
@@ -461,17 +464,6 @@ void rankOut(const vector<string>& plrs,const vector<int>& stats){
     sort(loss,SIZE);
     sort(draw,SIZE);
     
-    for(int i = 0;i<SIZE;i++){
-        cout<<"wins "<<wins[i]<<endl;
-        cout<<"id "<<wins[i+SIZE]<<endl;
-        cout<<"loss "<<loss[i]<<endl;
-        cout<<"id "<<loss[i+SIZE]<<endl;
-        cout<<"draw "<<draw[i]<<endl;
-        cout<<"id "<<draw[i+SIZE]<<endl;
-    }
-    //Determine how many players to print
-    if(SIZE<MAX_DIS) top = SIZE;
-    else top = MAX_DIS;
     //Print to the screen
     cout<<"---------Rankings----------\n";
     for(int i = 0;i<CATEGORIES;i++){
@@ -480,28 +472,43 @@ void rankOut(const vector<string>& plrs,const vector<int>& stats){
                  catgryOut(plrs,draw,SIZE,"Draws");
     }
 }
+
+//Prints a specific category to the screen
+//Inputs
+//  plrs = list of players
+//  c_arr = the category array, holding the score for each category and the
+//          corresponding IDs
+//  size = the size of a single partition of the array
+//  cat = the category type to be printed
 void catgryOut(const vector<string>& plrs,const int c_arr[],int size,string cat){
-    const int MAX_DIS = 10;
-    const int MAX_SPC = 11;
-    int top;
+    const int MAX_DIS = 10;//Maximum number of users displayed
+    const int MAX_SPC = 11;//Maximum number of spaces between the user and his score
+    int top;//The number of users displayed
+    int s_num;//The number of spaces between the user and his score
+    string plr;//The players account name
+    
+    //If the size number of users is less than 10, set the maximum number of users
+    //to be displayed to size
     if(size<MAX_DIS) top = size;
     else top = MAX_DIS;
-    int s_num;
-    string plr;
     
+    //Output a specific category
     cout<<"Most "<<cat<<endl;
     cout<<"-------------------\n";
     for(int i = 0;i<top;i++){
         plr = plrs[c_arr[size+i]];
         s_num = MAX_SPC-plr.length();
-        cout<<i<<". "<<plr<<" with ";
+        cout<<(i+1)<<". "<<plr<<" with ";
         for(int j = 0;j<s_num;j++) cout<<" ";
         cout<<setw(4)<<c_arr[i]<<" "<<cat<<endl;
     }
+    
+    //Wait for input before moving to the next category
     cout<<endl;
     waitIpt();
     cout<<endl;
 }
+
 //Print the board to the screen
 //Inputs
 //  board = the current board
@@ -690,25 +697,30 @@ int compMove(const char board[][B_MAX],int size){
     int c_val;//The value of the current space being examined
     int h_val = 0;//The highest valued spot
     int move = 0;//The computers chosen column
-    //Loop through every space
-    for(int i = 0;i<size;i++){
-        for(int j = 0;j<size+1;j++){
+    
+    //Loop through each space of a column until the first empty one is found
+    for(int col = 0;col<size+1;col++){
+        for(int row = size-1;row>=0;row--){
             //If the space is empty, get the value of that space
             //Otherwise move on to the next space
-            if(board[i][j] == '.'){
-                c_val = getValue(board,size,plr,i,j);
+            if(board[row][col] == '.'){
+                c_val = getValue(board,size,plr,row,col);
                 //If the current spaces value is greater than the highest value
                 //set the move to equal the current column and set the highest
                 //value to the current value
                 if(c_val > h_val){
-                    move = j;
+                    move = col;
                     h_val = c_val;
                 }
+                //Once the first empty space is found, move on to the next column
+                break;
             }
         }
     }
+    //Return the highest valued move
     return move;
 }
+
 //Implements the game Connect Four of variable board size
 //Inputs
 //  b_size = the size of the game board
