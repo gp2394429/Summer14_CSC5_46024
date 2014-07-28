@@ -29,18 +29,19 @@ int getNum();
 void waitIpt();
 bool inRange(int,int,int=0);
 void empty(char[][B_MAX],int);
+void acctOut(const vector<string>&,int);
 void statOut(const vector<string>&,const vector<int>&,int);
 void rankOut(const vector<string>&,const vector<int>&);
 void catgryOut(const vector<string>&,const int[],int,string);
-void acctOut(const vector<string>&,int);
 void boardOut(const char[][B_MAX],int);
 bool isLegal(const char[][B_MAX],int);
 void update(char[][B_MAX],int,int,bool,int&);
-void endMsg(const char[][B_MAX],int,bool&);
+void endGame(const char[][B_MAX],int,bool&);
 bool isDraw(const char[][B_MAX],int);
 bool didWin(const char[][B_MAX],int,int,int,int);
 int getMatch(const char[][B_MAX],int,int,int,char,int,int);
 int getValue(const char[][B_MAX],int,char,int,int);
+int compMove(const char[][B_MAX],int);
 void connectFour(int,const vector<string>&,vector<int>&,int,int);
 //Begin Execution
 
@@ -151,7 +152,7 @@ int main(int argc, char** argv) {
                     //If the name isn't found, check to see if the account name is guest
                     //Otherwise ask if the user wishes to register the account
                     if(id<0 && !(acct_name == "Guest" || acct_name == "guest")){
-                        cout<<"Account name not found, register new account?: ";
+                        cout<<"Account name not found, register new account? [y/n]: ";
                         if(isYes()){
                             id = plrs.size();
                             plrs.push_back(acct_name);
@@ -250,14 +251,14 @@ int main(int argc, char** argv) {
                             //Output player 1's statistics unless it is a guest player
                             if(p1_id>=0) statOut(plrs,stats,p1_id);
                             else cout<<"Guest players have no statistics";
-                            cout<<endl;
+                            cout<<endl<<endl;
                             break;
                         }
                         case(2):{
                             //Output player 2's statistics unless it is a guest player
                             if(p2_id>=0) statOut(plrs,stats,p2_id);
                             else cout<<"Guest players have no statistics";
-                            cout<<endl;
+                            cout<<endl<<endl;
                             break;
                         }
                         case(3):{
@@ -425,7 +426,7 @@ void acctOut(const vector<string>& plrs,int id){
 //  stats = the list of statistics
 //  id = the id number of the player to lookup
 //No Outputs
-void statOut(const vector<string>& plrs, const vector<int>& stats, int id){
+void statOut(const vector<string>& plrs,const vector<int>& stats,int id){
     cout<<plrs[id]<<"'s Statistics\n";
     cout<<"-------------------------\n";
     cout<<"Games Won:   "<<setw(4)<<stats[(id*4)+1]<<endl;
@@ -551,14 +552,14 @@ bool isLegal(const char board[][B_MAX],int p_move){
 //Outputs
 //  board = the board updated with the current players move
 //  row = the row where the piece landed
-void update(char board[][B_MAX],int size,int MOVE,bool plr,int& row){
+void update(char board[][B_MAX],int size,int move,bool plr,int& row){
     char crd;//The current coordinate being examined
     for(int i = size-1;i>=0;i--){
-        crd = board[i][MOVE-1];
+        crd = board[i][move-1];
         if(crd == '.'){
             if(plr) crd = 'O';
             else crd = 'X';
-            board[i][MOVE-1] = crd;
+            board[i][move-1] = crd;
             row = i+1;
             break;
         }
@@ -764,18 +765,7 @@ void connectFour(int b_size,const vector<string>& plrs,vector<int>& stats,int p1
         update(board,b_size,p_col,plr,p_row);
         
         //Check for game ending conditions
-        if(isDraw(board,b_size)){
-            //Output a draw message
-            cout<<"   The game is a draw!\n\n";
-            
-            //Update statistics
-            if(p1_id >= 0) stats[(p1_id*4)+DRAW]+=1;
-            if(p2_id >= 0) stats[(p2_id*4)+DRAW]+=1;
-            
-            //End the game
-            endGame(board,b_size,running);
-        }
-        else if(didWin(board,b_size,p_row-1,p_col-1)){
+        if(didWin(board,b_size,p_row-1,p_col-1)){
             //Output who won
             if(p2_id == 0 && plr) cout<<"The computer";
             else{
@@ -788,6 +778,17 @@ void connectFour(int b_size,const vector<string>& plrs,vector<int>& stats,int p1
             if(id >= 0) stats[(id*4)+WIN]+=1;
             if(!plr && p2_id >= 0) stats[(p2_id*4)+LOSS]+=1;
             if(plr && p1_id >= 0) stats[(p1_id*4)+LOSS]+=1;
+            
+            //End the game
+            endGame(board,b_size,running);
+        }
+        else if(isDraw(board,b_size)){
+            //Output a draw message
+            cout<<"   The game is a draw!\n\n";
+            
+            //Update statistics
+            if(p1_id >= 0) stats[(p1_id*4)+DRAW]+=1;
+            if(p2_id >= 0) stats[(p2_id*4)+DRAW]+=1;
             
             //End the game
             endGame(board,b_size,running);
