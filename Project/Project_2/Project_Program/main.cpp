@@ -522,10 +522,10 @@ void boardOut(const char board[][B_MAX],int size){
         cout<<" "<<i+1;
     cout<<endl;
     //Output the board
-    for(int i = 0;i<size;i++){
+    for(int r = 0;r<size;r++){
         cout<<"    |";
-        for(int j = 0;j<size+1;j++)
-            cout<<board[i][j]<<"|";
+        for(int c = 0;c<size+1;c++)
+            cout<<board[r][c]<<"|";
         cout<<endl;
     }
     cout<<endl;
